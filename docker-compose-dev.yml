@@ -1,0 +1,8 @@
+version: '3'
+services:
+    typing-speed-db:
+        image: mongo:4.2.2
+        environment:
+            MONGO_INITDB_DATABASE: typing-speed-test
+        ports:
+            - 27017:27017
