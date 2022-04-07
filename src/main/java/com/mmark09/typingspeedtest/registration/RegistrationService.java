@@ -15,14 +15,14 @@ public class RegistrationService {
     public String register(RegistrationRequest request) {
         boolean isEmailValid = Validator.isEmailValid(request.getEmail());
         boolean isPasswordValid =  Validator.isPasswordValid(request.getPassword());
-        boolean isUsernameValid =  Validator.isUsernameValid(request.getUserName());
+        boolean isUsernameValid =  Validator.isUsernameValid(request.getUsername());
 
         if(!isEmailValid || !isPasswordValid || !isUsernameValid)
-            throw new IllegalStateException("invalid input");
+            return "Invalid registration request";
 
         return userService.signUpUser(
                 new User(
-                        request.getUserName(),
+                        request.getUsername(),
                         request.getEmail(),
                         request.getPassword(),
                         UserRole.USER
