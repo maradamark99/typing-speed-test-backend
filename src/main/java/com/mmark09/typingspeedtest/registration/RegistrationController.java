@@ -3,6 +3,8 @@ package com.mmark09.typingspeedtest.registration;
 import com.mmark09.typingspeedtest.user.User;
 import com.mmark09.typingspeedtest.user.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +23,8 @@ public class RegistrationController {
     }
 
     @PostMapping
-    public String register(@RequestBody RegistrationRequest request){
-        return registrationService.register(request);
+    public ResponseEntity<String> register(@RequestBody RegistrationRequest request){
+        String response = registrationService.register(request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

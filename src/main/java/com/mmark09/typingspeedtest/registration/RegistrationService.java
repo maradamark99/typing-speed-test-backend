@@ -1,5 +1,6 @@
 package com.mmark09.typingspeedtest.registration;
 
+import com.mmark09.typingspeedtest.exceptions.InvalidRegistrationRequestException;
 import com.mmark09.typingspeedtest.user.User;
 import com.mmark09.typingspeedtest.user.UserRole;
 import com.mmark09.typingspeedtest.user.UserService;
@@ -18,7 +19,7 @@ public class RegistrationService {
         boolean isUsernameValid =  Validator.isUsernameValid(request.getUsername());
 
         if(!isEmailValid || !isPasswordValid || !isUsernameValid)
-            return "Invalid registration request";
+            throw new InvalidRegistrationRequestException();
 
         return userService.signUpUser(
                 new User(

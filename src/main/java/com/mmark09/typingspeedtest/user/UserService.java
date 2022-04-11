@@ -1,5 +1,6 @@
 package com.mmark09.typingspeedtest.user;
 
+import com.mmark09.typingspeedtest.exceptions.UsernameAlreadyExistsException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,7 +27,7 @@ public class UserService implements UserDetailsService {
         boolean userExists = userRepository.findByUsername(user.getUsername())
                 .isPresent();
         if(userExists){
-            throw new IllegalStateException("username already taken");
+            throw new UsernameAlreadyExistsException();
         }
         String encodedPw = bCryptPasswordEncoder
                 .encode(user.getPassword());
