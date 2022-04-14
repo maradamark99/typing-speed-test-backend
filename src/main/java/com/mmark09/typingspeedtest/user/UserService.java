@@ -23,7 +23,7 @@ public class UserService implements UserDetailsService {
                         new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG,username)));
     }
 
-    public String signUpUser(User user){
+    public User signUpUser(User user){
         boolean userExists = userRepository.findByUsername(user.getUsername())
                 .isPresent();
         if(userExists){
@@ -34,6 +34,6 @@ public class UserService implements UserDetailsService {
         user.setPassword(encodedPw);
         userRepository.save(user);
 
-        return "saved";
+        return user;
     }
 }

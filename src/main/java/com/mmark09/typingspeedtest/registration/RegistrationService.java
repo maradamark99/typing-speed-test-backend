@@ -13,7 +13,7 @@ public class RegistrationService {
 
     private final UserService userService;
 
-    public String register(RegistrationRequest request) {
+    public User register(RegistrationRequest request) {
         boolean isEmailValid = Validator.isEmailValid(request.getEmail());
         boolean isPasswordValid =  Validator.isPasswordValid(request.getPassword());
         boolean isUsernameValid =  Validator.isUsernameValid(request.getUsername());

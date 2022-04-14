@@ -3,6 +3,7 @@ package com.mmark09.typingspeedtest.registration;
 import com.mmark09.typingspeedtest.user.User;
 import com.mmark09.typingspeedtest.user.UserRepository;
 import lombok.AllArgsConstructor;
+import org.bson.json.JsonObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/v1/registration")
+@CrossOrigin(origins = "*") // for now, this will do
+@RequestMapping(path = "api/v1/register")
 @AllArgsConstructor
 public class RegistrationController {
 
@@ -23,8 +25,9 @@ public class RegistrationController {
     }
 
     @PostMapping
-    public ResponseEntity<String> register(@RequestBody RegistrationRequest request){
-        String response = registrationService.register(request);
+    @ResponseBody
+    public ResponseEntity<User> register(@RequestBody RegistrationRequest request){
+        User response = registrationService.register(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

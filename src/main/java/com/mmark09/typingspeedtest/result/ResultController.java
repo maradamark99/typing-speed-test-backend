@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "localhost:4200") // for now, this will do
+@CrossOrigin(origins = "*") // for now, this will do
 @RequestMapping(path = "api/v1/results")
 @AllArgsConstructor
 public class ResultController {
