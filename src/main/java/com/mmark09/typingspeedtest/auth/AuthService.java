@@ -1,4 +1,4 @@
-package com.mmark09.typingspeedtest.registration;
+package com.mmark09.typingspeedtest.auth;
 
 import com.mmark09.typingspeedtest.exceptions.InvalidRegistrationRequestException;
 import com.mmark09.typingspeedtest.user.User;
@@ -9,16 +9,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class RegistrationService {
+public class AuthService {
 
     private final UserService userService;
 
-    public User register(RegistrationRequest request) {
-        boolean isEmailValid = Validator.isEmailValid(request.getEmail());
-        boolean isPasswordValid =  Validator.isPasswordValid(request.getPassword());
-        boolean isUsernameValid =  Validator.isUsernameValid(request.getUsername());
+    private boolean isValidRegistrationRequest(RegistrationRequest request) {
+        return Validator.isEmailValid(request.getEmail()) &&
+                Validator.isPasswordValid(request.getPassword()) &&
+                Validator.isUsernameValid(request.getUsername());
+    }
 
-        if(!isEmailValid || !isPasswordValid || !isUsernameValid)
+    public User register(RegistrationRequest request) {
+
+        if(!isValidRegistrationRequest(request))
             throw new InvalidRegistrationRequestException();
 
         return userService.signUpUser(
@@ -31,4 +34,7 @@ public class RegistrationService {
         );
     }
 
+    public User login(LoginRequest request) {
+        return userService.loadUserByUsername(request.getUsername());
+    }
 }

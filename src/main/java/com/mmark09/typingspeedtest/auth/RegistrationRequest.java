@@ -1,4 +1,4 @@
-package com.mmark09.typingspeedtest.registration;
+package com.mmark09.typingspeedtest.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
