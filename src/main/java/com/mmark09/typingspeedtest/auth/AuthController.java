@@ -3,7 +3,6 @@ package com.mmark09.typingspeedtest.auth;
 import com.mmark09.typingspeedtest.user.User;
 import com.mmark09.typingspeedtest.user.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,10 +29,4 @@ public class AuthController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping(path = "/login")
-    @ResponseBody
-    public ResponseEntity<User> login(@RequestBody LoginRequest request) {
-        User response = authService.login(request);
-        return ResponseEntity.ok().body(response);
-    }
 }
