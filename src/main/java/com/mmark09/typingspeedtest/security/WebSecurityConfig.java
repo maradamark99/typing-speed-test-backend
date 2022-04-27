@@ -27,7 +27,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http
+                .cors().and()
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/v1/results/**").authenticated()
                 .anyRequest().permitAll()
@@ -54,6 +56,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
         CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
+        corsConfiguration.addAllowedOrigin("http://localhost:4200/**");
+        corsConfiguration.addAllowedHeader("*");
         source.registerCorsConfiguration("/**", corsConfiguration);
 
         return source;
