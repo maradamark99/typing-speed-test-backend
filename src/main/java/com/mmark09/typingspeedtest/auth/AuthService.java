@@ -5,6 +5,7 @@ import com.mmark09.typingspeedtest.user.User;
 import com.mmark09.typingspeedtest.user.UserRole;
 import com.mmark09.typingspeedtest.user.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,7 +35,7 @@ public class AuthService {
         );
     }
 
-    public User login(LoginRequest request) {
+    public UserDetails login(LoginRequest request) {
         return userService.loadUserByUsername(request.getUsername());
     }
 }

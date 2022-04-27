@@ -1,4 +1,4 @@
-package com.mmark09.typingspeedtest.security;
+package com.mmark09.typingspeedtest.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -14,8 +14,9 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.mmark09.typingspeedtest.security.SecurityConstants.*;
 
@@ -31,19 +32,15 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req,
                                                 HttpServletResponse res) throws AuthenticationException {
-        try {
-            User creds = new ObjectMapper()
+        try{
+            User user = new ObjectMapper()
                     .readValue(req.getInputStream(), User.class);
-
-            return authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            creds.getUsername(),
-                            creds.getPassword(),
-                            new ArrayList<>())
-            );
-        } catch (IOException e) {
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+            return authenticationManager.authenticate(authenticationToken);
+        } catch (IOException e){
             throw new RuntimeException(e);
         }
+
     }
 
     @Override
@@ -51,14 +48,15 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse res,
                                             FilterChain chain,
                                             Authentication auth) throws IOException {
-        String token = JWT.create()
-                .withSubject(((User) auth.getPrincipal()).getUsername())
+        String access_token = JWT.create()
+                .withSubject(((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .sign(Algorithm.HMAC512(SECRET.getBytes()));
+                .sign(Algorithm.HMAC256(SECRET.getBytes()));
 
-        String body = ((User) auth.getPrincipal()).getUsername() + " " + token;
+        Map<String,String> token = new HashMap<>();
+        token.put("access_token", access_token);
+        res.setContentType("application/json");
+        new ObjectMapper().writeValue(res.getOutputStream(), token);
 
-        res.getWriter().write(body);
-        res.getWriter().flush();
     }
 }

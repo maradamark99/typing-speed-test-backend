@@ -1,4 +1,4 @@
-package com.mmark09.typingspeedtest.security;
+package com.mmark09.typingspeedtest.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static com.mmark09.typingspeedtest.security.SecurityConstants.*;
+import static com.mmark09.typingspeedtest.security.SecurityConstants.HEADER_STRING;
+import static com.mmark09.typingspeedtest.security.SecurityConstants.SECRET;
+import static com.mmark09.typingspeedtest.security.SecurityConstants.TOKEN_PREFIX;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     public JWTAuthorizationFilter(AuthenticationManager authManager) {
@@ -41,7 +43,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         String token = request.getHeader(HEADER_STRING);
 
         if (token != null) {
-            String user = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
+            String user = JWT.require(Algorithm.HMAC256(SECRET.getBytes()))
                     .build()
                     .verify(token.replace(TOKEN_PREFIX, ""))
                     .getSubject();
