@@ -53,10 +53,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(Algorithm.HMAC256(SECRET.getBytes()));
 
-        Map<String,String> token = new HashMap<>();
-        token.put("access_token", access_token);
+        Map<String,String> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("access_token", access_token);
         res.setContentType("application/json");
-        new ObjectMapper().writeValue(res.getOutputStream(), token);
+        new ObjectMapper().writeValue(res.getOutputStream(), response);
 
     }
 }
