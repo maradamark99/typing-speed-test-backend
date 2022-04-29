@@ -1,12 +1,12 @@
 package com.mmark09.typingspeedtest.result;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class Result {
