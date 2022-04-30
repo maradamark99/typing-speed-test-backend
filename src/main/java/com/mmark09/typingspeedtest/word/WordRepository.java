@@ -2,6 +2,8 @@ package com.mmark09.typingspeedtest.word;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
+
 public interface WordRepository extends MongoRepository <Word, String> {
-    Word findAllByDifficulty(Difficulty difficulty);
+    List<Word> findAllByDifficulty(Difficulty difficulty);
 }
