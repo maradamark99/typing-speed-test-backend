@@ -50,6 +50,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             Authentication auth) throws IOException {
         String access_token = JWT.create()
                 .withSubject(((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername())
+                .withClaim("authorities", ((org.springframework.security.core.userdetails.User) auth.getPrincipal())
+                        .getAuthorities().toString().replace("[", "").replace("]", ""))
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(Algorithm.HMAC256(SECRET.getBytes()));
 
