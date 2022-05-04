@@ -2,6 +2,7 @@ package com.mmark09.typingspeedtest.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -45,18 +46,15 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
 
-        //TODO: find a better way for this
         if (token != null) {
-            String user = JWT.require(Algorithm.HMAC256(SECRET.getBytes()))
+            DecodedJWT decoded = JWT.require(Algorithm.HMAC256(SECRET.getBytes()))
                     .build()
-                    .verify(token.replace(TOKEN_PREFIX, ""))
-                    .getSubject();
-            String authority = JWT.require(Algorithm.HMAC256(SECRET.getBytes()))
-                    .build()
-                    .verify(token.replace(TOKEN_PREFIX, ""))
-                    .getClaim("authorities").asString();
+                    .verify(token.replace(TOKEN_PREFIX, ""));
 
-            SimpleGrantedAuthority auth = new SimpleGrantedAuthority(authority.toString());
+            String user = decoded.getSubject();
+            String authority = decoded.getClaim("authorities").asString();
+
+            SimpleGrantedAuthority auth = new SimpleGrantedAuthority(authority);
             if (user != null) {
                 return new UsernamePasswordAuthenticationToken(user, null, Collections.singletonList(auth));
             }
