@@ -34,6 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST,"/api/v1/results").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/v1/words").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.GET, "/api/v1/auth").hasAuthority("ADMIN")
                 .anyRequest().permitAll()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))

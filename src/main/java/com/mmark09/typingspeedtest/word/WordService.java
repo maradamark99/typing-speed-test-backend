@@ -14,7 +14,7 @@ public class WordService {
         difficulty = difficulty.toUpperCase();
         if(!isValidDifficulty(difficulty))
             throw new IllegalArgumentException("Invalid difficulty");
-        return wordRepository.findAllByDifficulty(difficulty);
+        return wordRepository.findWordsByDifficulty(difficulty);
     }
 
     public Word save(Word word) {
