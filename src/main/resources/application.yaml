@@ -6,6 +6,6 @@ spring:
     password: password # encoding it would be a better practice
 
   jpa:
-    hibernate.ddl-auto: update
+    hibernate.ddl-auto: create
     generate-ddl: true
     show-sql: true
