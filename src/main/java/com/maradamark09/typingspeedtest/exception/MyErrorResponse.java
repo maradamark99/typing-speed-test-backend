@@ -1,5 +1,6 @@
 package com.maradamark09.typingspeedtest.exception;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
+@Hidden
 public class MyErrorResponse {
 
     private Integer statusCode;
