@@ -1,5 +1,6 @@
 package com.maradamark09.typingspeedtest.difficulty;
 
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ public class DifficultyController {
     public List<Difficulty> getAll() { return difficultyService.findAll(); }
 
     @PostMapping("/difficulty")
+    @ResponseStatus(HttpStatus.CREATED)
     public Difficulty save(@Valid @RequestBody DifficultyRequest request) {
         return difficultyService.save(request);
     }
