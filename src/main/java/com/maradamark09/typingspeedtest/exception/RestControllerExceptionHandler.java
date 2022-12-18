@@ -26,7 +26,7 @@ public class RestControllerExceptionHandler {
             MethodArgumentNotValidException.class,
             MethodArgumentTypeMismatchException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public MyErrorResponse handleBadRequestException(RuntimeException ex, WebRequest request){
+    public MyErrorResponse handleBadRequestException(Exception ex, WebRequest request){
         return new MyErrorResponse(
                 HttpStatus.BAD_REQUEST,
                 ex.getMessage(),
