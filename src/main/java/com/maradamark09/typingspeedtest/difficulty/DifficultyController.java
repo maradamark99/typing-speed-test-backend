@@ -24,7 +24,7 @@ public class DifficultyController {
     }
 
     @DeleteMapping("/difficulty/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public void deleteById(@PathVariable("id") Long id) {
         difficultyService.deleteById(id);
     }
