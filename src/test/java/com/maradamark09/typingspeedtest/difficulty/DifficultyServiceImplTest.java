@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Fail.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
@@ -44,8 +45,8 @@ class DifficultyServiceImplTest {
     }
 
     @Test
-    void whenDeleteAndIdExists_thenSuccess() {
-
+    void whenDelete_andIdExists_thenSuccess() {
+        // TODO: write a better test for this
         long id = 1;
 
         when(difficultyRepository.existsById(id)).thenReturn(true);
@@ -57,26 +58,18 @@ class DifficultyServiceImplTest {
     }
 
     @Test
-    public void whenDeleteAndIdDoesNotExist_thenThrowsException() {
+    public void whenDelete_andIdDoesNotExist_thenThrowsException() {
 
         Long id = 1L;
         when(difficultyRepository.existsById(id)).thenReturn(false);
 
-        try {
+        assertThrows(ResourceNotFoundException.class, () -> difficultyService.deleteById(id));
+        verify(difficultyRepository, never()).deleteById(id);
 
-            difficultyService.deleteById(id);
-            fail("Expected a ResourceNotFoundException to be thrown");
-
-        } catch (ResourceNotFoundException ex) {
-
-            assertEquals("The difficulty with the given id: {"+id+"} does not exist.", ex.getMessage());
-            verify(difficultyRepository, never()).deleteById(id);
-
-        }
     }
 
     @Test
-    public void whenSaveAndDifficultyNotExists_thenSuccess() {
+    public void whenSave_andDifficultyNotExists_thenSuccess() {
 
         DifficultyRequest difficultyRequest = new DifficultyRequest("Easy", (byte)5);
         when(difficultyRepository.existsByValue(difficultyRequest.getValue())).thenReturn(false);
@@ -103,28 +96,20 @@ class DifficultyServiceImplTest {
     }
 
     @Test
-    public void whenSaveAndDifficultyAlreadyExists_thenThrowsException() {
+    public void whenSave_andDifficultyAlreadyExists_thenThrowsException() {
 
         DifficultyRequest difficultyRequest = new DifficultyRequest("Easy", (byte)5);
         when(difficultyRepository.existsByValue(difficultyRequest.getValue())).thenReturn(true);
 
-        try {
+        assertThrows(ResourceAlreadyExistsException.class, () -> difficultyService.save(difficultyRequest));
 
-            difficultyService.save(difficultyRequest);
-            fail("Expected a ResourceAlreadyExistsException to be thrown");
-
-        } catch (ResourceAlreadyExistsException ex) {
-
-            assertEquals("The provided difficulty {"+difficultyRequest.getValue()+"} already exists.", ex.getMessage());
-            verify(difficultyRepository).existsByValue(difficultyRequest.getValue());
-            verify(difficultyRepository, never()).save(any());
-
-        }
+        verify(difficultyRepository).existsByValue(difficultyRequest.getValue());
+        verify(difficultyRepository, never()).save(any());
 
     }
 
     @Test
-    public void whenUpdateAndDifficultyExists_thenSuccess() {
+    public void whenUpdate_andDifficultyExists_thenSuccess() {
 
         Long id = 1L;
         DifficultyRequest difficultyRequest = new DifficultyRequest("Easy", (byte)5);
@@ -154,7 +139,7 @@ class DifficultyServiceImplTest {
     }
 
     @Test
-    public void whenUpdateAndDifficultyNotExists_thenCreatesNewDifficulty() {
+    public void whenUpdate_andDifficultyNotExists_thenCreatesNewDifficulty() {
 
         Long id = 1L;
         DifficultyRequest difficultyRequest = new DifficultyRequest("Easy", (byte)5);
