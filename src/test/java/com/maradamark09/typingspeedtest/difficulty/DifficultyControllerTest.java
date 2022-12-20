@@ -130,7 +130,7 @@ public class DifficultyControllerTest {
     }
 
     @Test
-    void whenUpdateWithValidValueAndId_thenReturn200() throws Exception {
+    void whenUpdateWithValidValueAndId_thenReturns200() throws Exception {
         long id = 9L;
         DifficultyRequest request = new DifficultyRequest("yeah", (byte)99);
         Difficulty expected = new Difficulty(id, "yeah", (byte)99, Collections.emptySet());
@@ -150,5 +150,5 @@ public class DifficultyControllerTest {
                 objectMapper.writeValueAsString(expected)
         );
     }
-    
+
 }
