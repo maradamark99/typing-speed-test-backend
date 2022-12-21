@@ -12,10 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Fail.fail;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,8 +24,9 @@ class DifficultyServiceImplTest {
     @Mock
     private DifficultyRepository difficultyRepository;
 
+
     @Test
-    void whenGetAll_thenSuccess() {
+    public void whenGetAll_thenSuccess() {
 
         var expected = List.of(
                 new Difficulty(1L,"easy",(byte)10, Collections.emptySet()),
@@ -45,15 +43,19 @@ class DifficultyServiceImplTest {
     }
 
     @Test
-    void whenDelete_andIdExists_thenSuccess() {
-        // TODO: write a better test for this
-        long id = 1;
+    public void whenDelete_andIdExists_thenSuccess() {
+
+        long id = 1L;
 
         when(difficultyRepository.existsById(id)).thenReturn(true);
 
         difficultyService.deleteById(id);
 
-        verify(difficultyRepository).deleteById(anyLong());
+        verify(difficultyRepository).deleteById(id);
+
+        when(difficultyRepository.existsById(id)).thenReturn(false);
+
+        assertFalse(difficultyRepository.existsById(id));
 
     }
 
