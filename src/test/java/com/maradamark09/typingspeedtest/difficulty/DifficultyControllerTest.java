@@ -38,14 +38,16 @@ public class DifficultyControllerTest {
     @MockBean
     private DifficultyService difficultyService;
 
+    private static final String CONTROLLER_PATH = "/api/v1/difficulties";
+
     @Test
-    void whenGetAll_thenReturns200() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/difficulties"))
+    public void whenGetAll_thenReturns200() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(CONTROLLER_PATH))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void whenSaveWithValidValue_thenReturns201AndDifficulty() throws Exception {
+    public void whenSaveWithValidValue_thenReturns201AndDifficulty() throws Exception {
 
         DifficultyRequest request = new DifficultyRequest("test", (byte) 10);
         Difficulty expected = new Difficulty(1L, "test", (byte) 10, Collections.emptySet());
@@ -54,7 +56,7 @@ public class DifficultyControllerTest {
                 .thenReturn(expected);
 
         var result =
-                mockMvc.perform(post("/api/v1/difficulties/difficulty")
+                mockMvc.perform(post(CONTROLLER_PATH + "/difficulty")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .characterEncoding("utf-8"))
@@ -70,11 +72,11 @@ public class DifficultyControllerTest {
     }
 
     @Test
-    void whenSaveWithNullValue_thenReturns400() throws Exception {
+    public void whenSaveWithNullValue_thenReturns400() throws Exception {
 
         DifficultyRequest request = new DifficultyRequest(null, (byte) 99);
 
-        mockMvc.perform(post("/api/v1/difficulties/difficulty")
+        mockMvc.perform(post(CONTROLLER_PATH + "/difficulty")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .characterEncoding("utf-8"))
@@ -83,14 +85,14 @@ public class DifficultyControllerTest {
     }
 
     @Test
-    void whenSaveWithAlreadyExistingValue_thenReturns409() throws Exception {
+    public void whenSaveWithAlreadyExistingValue_thenReturns409() throws Exception {
 
         DifficultyRequest request = new DifficultyRequest("random", (byte) 1);
 
         doThrow(new ResourceAlreadyExistsException("The provided difficulty {" + request.getValue()
                 + "} already exists.")).when(difficultyService).save(any(DifficultyRequest.class));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/difficulties/difficulty")
+        mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH + "/difficulty")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .characterEncoding("utf-8"))
@@ -100,7 +102,7 @@ public class DifficultyControllerTest {
     }
 
     @Test
-    void whenDeleteByExistingId_thenReturns200() throws Exception {
+    public void whenDeleteByExistingId_thenReturns200() throws Exception {
 
         long id = 1L;
 
@@ -108,14 +110,14 @@ public class DifficultyControllerTest {
                 .when(difficultyService)
                 .deleteById(id);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/difficulties/difficulty/{id}", id))
+        mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/difficulty/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
 
     }
 
     @Test
-    void whenDeleteByNonExistingId_thenReturns404() throws Exception {
+    public void whenDeleteByNonExistingId_thenReturns404() throws Exception {
 
         long id = 99999L;
 
@@ -123,21 +125,21 @@ public class DifficultyControllerTest {
                 .when(difficultyService)
                 .deleteById(id);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/difficulties/difficulty/{id}", id))
+        mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/difficulty/{id}", id))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("\"The difficulty with the given id")));
 
     }
 
     @Test
-    void whenUpdateWithValidValueAndId_thenReturns200() throws Exception {
+    public void whenUpdateWithValidValueAndId_thenReturns200() throws Exception {
         long id = 9L;
         DifficultyRequest request = new DifficultyRequest("yeah", (byte)99);
         Difficulty expected = new Difficulty(id, "yeah", (byte)99, Collections.emptySet());
 
         when(difficultyService.update(any(DifficultyRequest.class), eq(id))).thenReturn(expected);
 
-        var result = mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/difficulties/difficulty/{id}", id)
+        var result = mockMvc.perform(MockMvcRequestBuilders.put(CONTROLLER_PATH + "/difficulty/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .characterEncoding("utf-8"))
