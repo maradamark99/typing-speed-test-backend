@@ -33,7 +33,7 @@ public class WordController {
     }
 
     @DeleteMapping("/word/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public void deleteById(@PathVariable("id") Long id) {
         wordService.deleteById(id);
     }
