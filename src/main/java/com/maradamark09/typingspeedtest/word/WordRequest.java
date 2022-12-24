@@ -7,13 +7,12 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 @AllArgsConstructor
 @Getter
-@Setter
 public class WordRequest {
 
     @NotNull
     @Length(min=1, max=50)
-    private String value;
+    private final String value;
 
-    private Long difficulty_id;
+    private final Long difficulty_id;
 
 }

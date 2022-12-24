@@ -6,15 +6,14 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 @Getter
-@Setter
 public class DifficultyRequest {
 
     @NotNull
     @Length(min = 1, max = 255)
-    private String value;
+    private final String value;
 
     @NotNull
-    private Byte maxWordLength;
+    private final Byte maxWordLength;
 
     public DifficultyRequest(String value, Byte maxWordLength) {
         this.value = value.toLowerCase();

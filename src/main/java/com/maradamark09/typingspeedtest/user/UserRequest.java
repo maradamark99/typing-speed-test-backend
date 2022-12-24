@@ -2,8 +2,10 @@ package com.maradamark09.typingspeedtest.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 
+@Getter
 public class UserRequest {
 
     @Length(min = 4, max = 50)
