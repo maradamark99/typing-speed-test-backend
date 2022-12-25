@@ -52,4 +52,12 @@ public class AppUser implements UserDetails {
         return isEnabled;
     }
 
+    public AppUser(String username, String password, Set<GrantedAuthority> grantedAuthorities) {
+
+        this.username = username;
+        this.password = password;
+        this.grantedAuthorities = grantedAuthorities;
+
+    }
+
 }
