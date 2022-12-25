@@ -1,19 +1,9 @@
 package com.maradamark09.typingspeedtest.difficulty;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
-@Getter
-public class DifficultyRequest {
-
-    @NotNull
-    @Length(min = 1, max = 255)
-    private final String value;
-
-    @NotNull
-    private final Byte maxWordLength;
+public record DifficultyRequest(@NotNull @Length(min = 1, max = 255) String value, @NotNull Byte maxWordLength) {
 
     public DifficultyRequest(String value, Byte maxWordLength) {
         this.value = value.toLowerCase();

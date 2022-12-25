@@ -32,20 +32,20 @@ public class WordServiceImpl implements WordService{
 
     @Override
     public Word save(WordRequest wordRequest) throws ResourceNotFoundException, WordLengthGreaterThanDifficultyException, ResourceAlreadyExistsException {
-        var difficulty = difficultyRepository.findById(wordRequest.getDifficulty_id())
+        var difficulty = difficultyRepository.findById(wordRequest.difficulty_id())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "The provided difficulty_id: {" + wordRequest.getDifficulty_id() + "} does not match any difficulty."
+                        "The provided difficulty_id: {" + wordRequest.difficulty_id() + "} does not match any difficulty."
                 ));
 
-        if(wordRequest.getValue().length() > difficulty.getMaxWordLength())
-            throw new WordLengthGreaterThanDifficultyException(wordRequest.getValue(), difficulty);
+        if(wordRequest.value().length() > difficulty.getMaxWordLength())
+            throw new WordLengthGreaterThanDifficultyException(wordRequest.value(), difficulty);
 
-        if(wordRepository.existsByValue(wordRequest.getValue()))
-            throw new ResourceAlreadyExistsException("The given word: {"+ wordRequest.getValue() +"} already exists");
+        if(wordRepository.existsByValue(wordRequest.value()))
+            throw new ResourceAlreadyExistsException("The given word: {"+ wordRequest.value() +"} already exists");
 
         var wordToSave =
                 Word.builder()
-                        .value(wordRequest.getValue())
+                        .value(wordRequest.value())
                         .difficulty(difficulty)
                         .build();
         return wordRepository.save(wordToSave);
