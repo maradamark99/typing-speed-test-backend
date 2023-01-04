@@ -1,7 +1,6 @@
 package com.maradamark09.typingspeedtest.auth;
 
 
-import com.maradamark09.typingspeedtest.user.UserRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,12 +11,18 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AppUserService userService;
+    private final UserDetailsServiceImpl userDetailsService;
+
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
+    public String login(@Valid @RequestBody LoginRequest loginRequest) {
+        return userDetailsService.loginUser(loginRequest);
+    }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerUser(@Valid @RequestBody UserRequest userRequest) {
-        userService.saveUser(userRequest);
+    public void register(@Valid @RequestBody RegistrationRequest registrationRequest) {
+        userDetailsService.registerUser(registrationRequest);
     }
 
 }
