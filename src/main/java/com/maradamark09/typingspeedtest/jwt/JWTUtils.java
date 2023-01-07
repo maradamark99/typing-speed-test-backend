@@ -13,8 +13,10 @@ public class JWTUtils {
 
     private final static long EXPIRATION_TIME = 900_000;
 
+    private final static Algorithm algorithm = Algorithm.HMAC512(SECRET.getBytes());
+
     public static DecodedJWT decodeToken(String encodedToken) {
-        return JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
+        return JWT.require(algorithm)
                 .build()
                 .verify(encodedToken.replace(TOKEN_PREFIX, ""));
     }
@@ -23,7 +25,7 @@ public class JWTUtils {
         return JWT.create()
                 .withSubject(username)
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .sign(Algorithm.HMAC512(SECRET.getBytes()));
+                .sign(algorithm);
     }
 
 }
