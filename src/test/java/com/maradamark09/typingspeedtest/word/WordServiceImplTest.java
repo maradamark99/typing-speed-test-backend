@@ -140,7 +140,7 @@ class WordServiceImplTest {
 
         WordRequest wordRequest = new WordRequest("word", difficulty.getId());
         Word wordToSave = Word.builder()
-                .value(wordRequest.getValue())
+                .value(wordRequest.value())
                 .difficulty(difficulty)
                 .build();
 
@@ -151,7 +151,7 @@ class WordServiceImplTest {
         Word result = wordService.save(wordRequest);
 
         assertEquals(savedWord, result);
-        verify(wordRepository).existsByValue(wordRequest.getValue());
+        verify(wordRepository).existsByValue(wordRequest.value());
         verify(wordRepository).save(wordToSave);
 
     }

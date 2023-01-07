@@ -89,7 +89,8 @@ public class DifficultyControllerTest {
 
         DifficultyRequest request = new DifficultyRequest("random", (byte) 1);
 
-        doThrow(new ResourceAlreadyExistsException("The provided difficulty {" + request.getValue()
+        request.value() =
+        doThrow(new ResourceAlreadyExistsException("The provided difficulty {" + request.value()
                 + "} already exists.")).when(difficultyService).save(any(DifficultyRequest.class));
 
         mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH + "/difficulty")

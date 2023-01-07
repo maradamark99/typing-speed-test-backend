@@ -74,17 +74,17 @@ class DifficultyServiceImplTest {
     public void whenSave_andDifficultyNotExists_thenSuccess() {
 
         DifficultyRequest difficultyRequest = new DifficultyRequest("Easy", (byte)5);
-        when(difficultyRepository.existsByValue(difficultyRequest.getValue())).thenReturn(false);
+        when(difficultyRepository.existsByValue(difficultyRequest.value())).thenReturn(false);
 
         Difficulty difficultyToSave = Difficulty.builder()
-                .value(difficultyRequest.getValue())
-                .maxWordLength(difficultyRequest.getMaxWordLength())
+                .value(difficultyRequest.value())
+                .maxWordLength(difficultyRequest.maxWordLength())
                 .build();
 
         Difficulty savedDifficulty = Difficulty.builder()
                 .id(1L)
-                .value(difficultyRequest.getValue())
-                .maxWordLength(difficultyRequest.getMaxWordLength())
+                .value(difficultyRequest.value())
+                .maxWordLength(difficultyRequest.maxWordLength())
                 .build();
 
         when(difficultyRepository.save(difficultyToSave)).thenReturn(savedDifficulty);
@@ -92,7 +92,7 @@ class DifficultyServiceImplTest {
         Difficulty result = difficultyService.save(difficultyRequest);
 
         assertEquals(savedDifficulty, result);
-        verify(difficultyRepository).existsByValue(difficultyRequest.getValue());
+        verify(difficultyRepository).existsByValue(difficultyRequest.value());
         verify(difficultyRepository).save(difficultyToSave);
 
     }
@@ -101,11 +101,11 @@ class DifficultyServiceImplTest {
     public void whenSave_andDifficultyAlreadyExists_thenThrowsException() {
 
         DifficultyRequest difficultyRequest = new DifficultyRequest("Easy", (byte)5);
-        when(difficultyRepository.existsByValue(difficultyRequest.getValue())).thenReturn(true);
+        when(difficultyRepository.existsByValue(difficultyRequest.value())).thenReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> difficultyService.save(difficultyRequest));
 
-        verify(difficultyRepository).existsByValue(difficultyRequest.getValue());
+        verify(difficultyRepository).existsByValue(difficultyRequest.value());
         verify(difficultyRepository, never()).save(any());
 
     }
@@ -126,8 +126,8 @@ class DifficultyServiceImplTest {
 
         Difficulty updatedDifficulty = Difficulty.builder()
                 .id(id)
-                .value(difficultyRequest.getValue())
-                .maxWordLength(difficultyRequest.getMaxWordLength())
+                .value(difficultyRequest.value())
+                .maxWordLength(difficultyRequest.maxWordLength())
                 .build();
 
         when(difficultyRepository.save(difficulty)).thenReturn(updatedDifficulty);
@@ -148,14 +148,14 @@ class DifficultyServiceImplTest {
         when(difficultyRepository.findById(id)).thenReturn(Optional.empty());
 
         Difficulty difficultyToSave = Difficulty.builder()
-                .value(difficultyRequest.getValue())
-                .maxWordLength(difficultyRequest.getMaxWordLength())
+                .value(difficultyRequest.value())
+                .maxWordLength(difficultyRequest.maxWordLength())
                 .build();
 
         Difficulty savedDifficulty = Difficulty.builder()
                 .id(id)
-                .value(difficultyRequest.getValue())
-                .maxWordLength(difficultyRequest.getMaxWordLength())
+                .value(difficultyRequest.value())
+                .maxWordLength(difficultyRequest.maxWordLength())
                 .build();
 
         when(difficultyRepository.save(difficultyToSave)).thenReturn(savedDifficulty);

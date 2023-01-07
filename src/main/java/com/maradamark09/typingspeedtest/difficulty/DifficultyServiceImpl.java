@@ -20,14 +20,14 @@ public class DifficultyServiceImpl implements DifficultyService {
 
     @Override
     public Difficulty save(DifficultyRequest difficultyRequest) {
-        if(difficultyRepository.existsByValue(difficultyRequest.getValue()))
-            throw new ResourceAlreadyExistsException("The provided difficulty {" + difficultyRequest.getValue()
+        if(difficultyRepository.existsByValue(difficultyRequest.value()))
+            throw new ResourceAlreadyExistsException("The provided difficulty {" + difficultyRequest.value()
                     + "} already exists.");
 
         var difficultyToSave =
                 Difficulty.builder()
-                        .value(difficultyRequest.getValue())
-                        .maxWordLength(difficultyRequest.getMaxWordLength())
+                        .value(difficultyRequest.value())
+                        .maxWordLength(difficultyRequest.maxWordLength())
                         .build();
 
         return difficultyRepository.save(difficultyToSave);
@@ -44,8 +44,8 @@ public class DifficultyServiceImpl implements DifficultyService {
     public Difficulty update(DifficultyRequest difficultyRequest, Long id) {
         return difficultyRepository.findById(id)
                 .map(difficulty -> {
-                    difficulty.setValue(difficultyRequest.getValue());
-                    difficulty.setMaxWordLength(difficultyRequest.getMaxWordLength());
+                    difficulty.setValue(difficultyRequest.value());
+                    difficulty.setMaxWordLength(difficultyRequest.maxWordLength());
                     return difficultyRepository.save(difficulty);
                 }).orElseGet(() -> save(difficultyRequest));
     }
