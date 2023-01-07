@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UserDetailsServiceImpl userDetailsService;
+    private final AuthService authService;
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public String login(@Valid @RequestBody LoginRequest loginRequest) {
-        return userDetailsService.loginUser(loginRequest);
+        return authService.login(loginRequest);
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void register(@Valid @RequestBody RegistrationRequest registrationRequest) {
-        userDetailsService.registerUser(registrationRequest);
+        authService.register(registrationRequest);
     }
 
 }
