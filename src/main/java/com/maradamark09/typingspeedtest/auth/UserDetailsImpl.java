@@ -43,8 +43,7 @@ public class UserDetailsImpl implements UserDetails {
 
     public static UserDetailsImpl build(User user) {
         var role = new SimpleGrantedAuthority(
-            user.getRole()
-                    .toString()
+            user.getRole().getValue()
         );
 
         return new UserDetailsImpl(
@@ -52,6 +51,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getPassword(),
                 Collections.singleton(role)
             );
+
     }
 
 }
