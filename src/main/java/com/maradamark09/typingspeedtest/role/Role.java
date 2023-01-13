@@ -11,7 +11,6 @@ import java.util.Set;
 @Entity
 @Table(name = "user_roles")
 @Getter
-// TODO: check if this is causing the problem
 public class Role {
 
     @Id
