@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -65,15 +66,17 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         // if the request doesn't contain an auth header or the value doesn't start with Bearer
         // then invoke the next filter in the filter chain
         if(!hasText(authHeader) || (hasText(authHeader) && !authHeader.startsWith(TOKEN_PREFIX))) {
-            filterChain.doFilter(request, response);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
         final var token = authHeader.split(" ")[1].trim();
         var authentication = getAuthentication(token);
+
         authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request)
         );
+
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
