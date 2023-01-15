@@ -26,13 +26,13 @@ public class WordController {
         return wordService.getAllByDifficulty(difficulty);
     }
 
-    @PostMapping("/word")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Word save(@Valid @RequestBody WordRequest word){
         return wordService.save(word);
     }
 
-    @DeleteMapping("/word/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteById(@PathVariable("id") Long id) {
         wordService.deleteById(id);

@@ -1,6 +1,5 @@
 package com.maradamark09.typingspeedtest.difficulty;
 
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,19 +16,19 @@ public class DifficultyController {
     @GetMapping
     public List<Difficulty> getAll() { return difficultyService.findAll(); }
 
-    @PostMapping("/difficulty")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Difficulty save(@Valid @RequestBody DifficultyRequest request) {
         return difficultyService.save(request);
     }
 
-    @DeleteMapping("/difficulty/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteById(@PathVariable("id") Long id) {
         difficultyService.deleteById(id);
     }
 
-    @PutMapping("/difficulty/{id}")
+    @PutMapping("/{id}")
     public Difficulty updateById(@Valid @RequestBody DifficultyRequest difficulty, @PathVariable("id") Long id) {
         return difficultyService.update(difficulty, id);
     }
