@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,11 +25,11 @@ public class SecurityConfig {
         return http.cors().and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .exceptionHandling().authenticationEntryPoint(((request, response, authException) -> {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
-                }))
-                .and()
                 .authorizeHttpRequests()
+                .requestMatchers(HttpMethod.POST, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.GET,"/api/v1/difficulties/**", "/api/v1/words/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .anyRequest().authenticated()

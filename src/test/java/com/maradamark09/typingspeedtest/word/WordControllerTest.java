@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maradamark09.typingspeedtest.difficulty.Difficulty;
 import com.maradamark09.typingspeedtest.exception.ResourceAlreadyExistsException;
 import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
+import com.maradamark09.typingspeedtest.jwt.JWTAuthFilter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -37,6 +38,9 @@ class WordControllerTest {
 
     @MockBean
     private WordService wordService;
+
+    @MockBean
+    private JWTAuthFilter jwtAuthFilter;
 
     private static final String CONTROLLER_PATH = "/api/v1/words";
     @Test
@@ -73,7 +77,7 @@ class WordControllerTest {
                 .when(wordService)
                 .deleteById(id);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/word/{id}", id))
+        mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
 
@@ -87,7 +91,7 @@ class WordControllerTest {
                 .when(wordService)
                 .deleteById(id);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/word/{id}", id))
+        mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/{id}", id))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("test")));
 
@@ -104,7 +108,7 @@ class WordControllerTest {
                 .thenReturn(expected);
 
         var result =
-                mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH + "/word")
+                mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .characterEncoding("utf-8"))
@@ -124,7 +128,7 @@ class WordControllerTest {
 
         WordRequest request = new WordRequest(null, 3L);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH + "/word")
+        mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .characterEncoding("utf-8"))
@@ -140,7 +144,7 @@ class WordControllerTest {
         doThrow(new ResourceAlreadyExistsException("test"))
                 .when(wordService).save(any(WordRequest.class));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH + "/word")
+        mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .characterEncoding("utf-8"))

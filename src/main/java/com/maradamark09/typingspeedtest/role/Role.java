@@ -4,13 +4,13 @@ package com.maradamark09.typingspeedtest.role;
 import com.maradamark09.typingspeedtest.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.ToString;
+import lombok.Getter;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "user_roles")
-@ToString(exclude = {"id", "users"})
+@Getter
 public class Role {
 
     @Id

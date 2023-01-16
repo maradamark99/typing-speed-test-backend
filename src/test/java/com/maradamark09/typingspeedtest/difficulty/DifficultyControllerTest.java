@@ -3,10 +3,12 @@ package com.maradamark09.typingspeedtest.difficulty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maradamark09.typingspeedtest.exception.ResourceAlreadyExistsException;
 import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
+import com.maradamark09.typingspeedtest.jwt.JWTAuthFilter;
 import org.junit.jupiter.api.Test;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,7 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(DifficultyController.class)
+@WebMvcTest(value = DifficultyController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 public class DifficultyControllerTest {
@@ -37,6 +39,9 @@ public class DifficultyControllerTest {
 
     @MockBean
     private DifficultyService difficultyService;
+
+    @MockBean
+    private JWTAuthFilter jwtAuthFilter;
 
     private static final String CONTROLLER_PATH = "/api/v1/difficulties";
 
@@ -56,7 +61,7 @@ public class DifficultyControllerTest {
                 .thenReturn(expected);
 
         var result =
-                mockMvc.perform(post(CONTROLLER_PATH + "/difficulty")
+                mockMvc.perform(post(CONTROLLER_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .characterEncoding("utf-8"))
@@ -72,11 +77,11 @@ public class DifficultyControllerTest {
     }
 
     @Test
-    public void whenSaveWithNullValue_thenReturns400() throws Exception {
+    public void whenSaveWithInvalidValue_thenReturns400() throws Exception {
 
-        DifficultyRequest request = new DifficultyRequest(null, (byte) 99);
+        DifficultyRequest request = new DifficultyRequest("as", (byte) 99);
 
-        mockMvc.perform(post(CONTROLLER_PATH + "/difficulty")
+        mockMvc.perform(post(CONTROLLER_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .characterEncoding("utf-8"))
@@ -89,11 +94,10 @@ public class DifficultyControllerTest {
 
         DifficultyRequest request = new DifficultyRequest("random", (byte) 1);
 
-        request.value() =
         doThrow(new ResourceAlreadyExistsException("The provided difficulty {" + request.value()
                 + "} already exists.")).when(difficultyService).save(any(DifficultyRequest.class));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH + "/difficulty")
+        mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .characterEncoding("utf-8"))
@@ -111,7 +115,7 @@ public class DifficultyControllerTest {
                 .when(difficultyService)
                 .deleteById(id);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/difficulty/{id}", id))
+        mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
 
@@ -126,7 +130,7 @@ public class DifficultyControllerTest {
                 .when(difficultyService)
                 .deleteById(id);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/difficulty/{id}", id))
+        mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/{id}", id))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("\"The difficulty with the given id")));
 
@@ -140,7 +144,7 @@ public class DifficultyControllerTest {
 
         when(difficultyService.update(any(DifficultyRequest.class), eq(id))).thenReturn(expected);
 
-        var result = mockMvc.perform(MockMvcRequestBuilders.put(CONTROLLER_PATH + "/difficulty/{id}", id)
+        var result = mockMvc.perform(MockMvcRequestBuilders.put(CONTROLLER_PATH + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .characterEncoding("utf-8"))
