@@ -74,11 +74,11 @@ public class RestControllerExceptionHandler {
                 .status(status)
                 .statusCode(status.value())
                 .resource(request.getDescription(false))
-                .fieldErrors(getNecessaryInfoFromFieldErrors(ex.getFieldErrors(), request))
+                .fieldErrors(getUsefulInfoFromFieldErrors(ex.getFieldErrors(), request))
                 .build();
     }
 
-    public List<MyFieldError> getNecessaryInfoFromFieldErrors(List<FieldError> fieldErrors, WebRequest request) {
+    public List<MyFieldError> getUsefulInfoFromFieldErrors(List<FieldError> fieldErrors, WebRequest request) {
         var myFieldErrors = new ArrayList<MyFieldError>();
         fieldErrors.forEach(x ->
                 myFieldErrors.add(
