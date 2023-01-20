@@ -27,7 +27,7 @@ public class FilterChainExceptionHandler extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         }
         catch (JWTVerificationException e) {
-            var status = HttpServletResponse.SC_UNAUTHORIZED;
+            var status = HttpStatus.UNAUTHORIZED;
             var body = setResponse(
                     status,
                     e.getMessage()
@@ -35,7 +35,7 @@ public class FilterChainExceptionHandler extends OncePerRequestFilter {
             sendResponse(response, status, body);
         }
         catch (Exception e) {
-            var status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            var status = HttpStatus.INTERNAL_SERVER_ERROR;
             var body = setResponse(
                     status,
                     e.getMessage()
@@ -45,13 +45,17 @@ public class FilterChainExceptionHandler extends OncePerRequestFilter {
 
     }
 
-    private String setResponse(Integer statusCode, String message) throws JsonProcessingException {
-        var errorResponse = new MyErrorResponse(HttpStatus.valueOf(statusCode), message);
+    private String setResponse(HttpStatus status, String message) throws JsonProcessingException {
+        var errorResponse = MyErrorResponse.builder()
+                .status(status)
+                .statusCode(status.value())
+                .message(message)
+                .build();
         return objectMapper.writeValueAsString(errorResponse);
     }
 
-    private void sendResponse(HttpServletResponse httpServletResponse, Integer status, String json) throws IOException {
-        httpServletResponse.setStatus(status);
+    private void sendResponse(HttpServletResponse httpServletResponse, HttpStatus status, String json) throws IOException {
+        httpServletResponse.setStatus(status.value());
         httpServletResponse.getWriter().write(json);
         httpServletResponse.getWriter().flush();
     }
