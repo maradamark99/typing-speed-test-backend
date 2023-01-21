@@ -2,6 +2,7 @@ package com.maradamark09.typingspeedtest.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -20,7 +21,7 @@ public class RestControllerExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public MyErrorResponse handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
 
-        var status = HttpStatus.NOT_FOUND;
+        final var status = HttpStatus.NOT_FOUND;
 
         return MyErrorResponse.builder()
                 .status(status)
@@ -34,9 +35,9 @@ public class RestControllerExceptionHandler {
             HttpMessageNotReadableException.class,
             MethodArgumentTypeMismatchException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public MyErrorResponse handleBadRequestException(Exception ex, WebRequest request){
+    public MyErrorResponse handleInvalidRequestBodyFormatException(Exception ex, WebRequest request){
 
-        var status = HttpStatus.BAD_REQUEST;
+        final var status = HttpStatus.BAD_REQUEST;
 
         return MyErrorResponse.builder()
                 .status(status)
@@ -53,7 +54,7 @@ public class RestControllerExceptionHandler {
     public MyErrorResponse handleInvalidWordLengthGreaterThanDifficultyException(
             Exception ex, WebRequest request) {
 
-        var status = HttpStatus.UNPROCESSABLE_ENTITY;
+        final var status = HttpStatus.UNPROCESSABLE_ENTITY;
 
         return MyErrorResponse.builder()
                 .status(status)
@@ -68,18 +69,18 @@ public class RestControllerExceptionHandler {
     public MyErrorResponse handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex, WebRequest request) {
 
-        var status = HttpStatus.UNPROCESSABLE_ENTITY;
+        final var status = HttpStatus.UNPROCESSABLE_ENTITY;
 
         return MyErrorResponse.builder()
                 .status(status)
                 .statusCode(status.value())
                 .resource(request.getDescription(false))
-                .fieldErrors(getUsefulInfoFromFieldErrors(ex.getFieldErrors(), request))
+                .fieldErrors(getUsefulInfoFromFieldErrors(ex.getFieldErrors()))
                 .build();
     }
 
-    public List<MyFieldError> getUsefulInfoFromFieldErrors(List<FieldError> fieldErrors, WebRequest request) {
-        var myFieldErrors = new ArrayList<MyFieldError>();
+    public List<MyFieldError> getUsefulInfoFromFieldErrors(List<FieldError> fieldErrors) {
+        final var myFieldErrors = new ArrayList<MyFieldError>();
         fieldErrors.forEach(x ->
                 myFieldErrors.add(
                         new MyFieldError(x.getField(), x.getDefaultMessage())
@@ -94,7 +95,20 @@ public class RestControllerExceptionHandler {
             ResourceAlreadyExistsException ex,
             WebRequest request) {
 
-        var status = HttpStatus.CONFLICT;
+        final var status = HttpStatus.CONFLICT;
+
+        return MyErrorResponse.builder()
+                .status(status)
+                .statusCode(status.value())
+                .message(ex.getMessage())
+                .resource(request.getDescription(false))
+                .build();
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public MyErrorResponse handleBadCredentialsException(Exception ex, WebRequest request) {
+        final var status = HttpStatus.UNAUTHORIZED;
 
         return MyErrorResponse.builder()
                 .status(status)
@@ -108,7 +122,7 @@ public class RestControllerExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public MyErrorResponse handleGlobalException(Exception ex, WebRequest request) {
 
-        var status = HttpStatus.INTERNAL_SERVER_ERROR;
+        final var status = HttpStatus.INTERNAL_SERVER_ERROR;
 
         return MyErrorResponse.builder()
                 .status(status)
