@@ -53,7 +53,9 @@ public class ApplicationConfig {
         return List.of(
                 new PublicEndpoint("/api/v1/auth/**", Collections.emptySet()),
                 new PublicEndpoint("/api/v1/words/**", Collections.singleton(HttpMethod.GET)),
-                new PublicEndpoint("/api/v1/difficulties/**", Collections.singleton(HttpMethod.GET))
+                new PublicEndpoint("/api/v1/difficulties/**", Collections.singleton(HttpMethod.GET)),
+                new PublicEndpoint("/swagger-ui/**", Collections.emptySet()),
+                new PublicEndpoint("/v3/api-docs/**", Collections.emptySet())
         );
     }
 
