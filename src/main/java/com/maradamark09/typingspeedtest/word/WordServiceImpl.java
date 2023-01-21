@@ -1,5 +1,6 @@
 package com.maradamark09.typingspeedtest.word;
 
+import com.maradamark09.typingspeedtest.difficulty.DifficultyNotFoundException;
 import com.maradamark09.typingspeedtest.difficulty.DifficultyRepository;
 import com.maradamark09.typingspeedtest.exception.ResourceAlreadyExistsException;
 import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
@@ -33,15 +34,13 @@ public class WordServiceImpl implements WordService{
     @Override
     public Word save(WordRequest wordRequest) throws ResourceNotFoundException, WordLengthGreaterThanDifficultyException, ResourceAlreadyExistsException {
         var difficulty = difficultyRepository.findById(wordRequest.difficulty_id())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "The provided difficulty_id: {" + wordRequest.difficulty_id() + "} does not match any difficulty."
-                ));
+                .orElseThrow(() -> new DifficultyNotFoundException(wordRequest.difficulty_id()));
 
         if(wordRequest.value().length() > difficulty.getMaxWordLength())
             throw new WordLengthGreaterThanDifficultyException(wordRequest.value(), difficulty);
 
         if(wordRepository.existsByValue(wordRequest.value()))
-            throw new ResourceAlreadyExistsException("The given word: {"+ wordRequest.value() +"} already exists");
+            throw new WordAlreadyExistsException(wordRequest.value());
 
         var wordToSave =
                 Word.builder()
@@ -53,14 +52,13 @@ public class WordServiceImpl implements WordService{
 
     @Override
     public void deleteById(Long id) throws ResourceNotFoundException {
-        wordRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("The requested word with" +
-                " id: {" + id + "} does not exist."));
+        wordRepository.findById(id).orElseThrow(() -> new WordNotFoundException(id));
         wordRepository.deleteById(id);
     }
 
     private void checkIfDifficultyExists(String difficulty) throws ResourceNotFoundException {
         if(!difficultyRepository.existsByValue(difficulty.toLowerCase()))
-            throw new ResourceNotFoundException("The given difficulty: {" + difficulty + "} does not exist");
+            throw new DifficultyNotFoundException();
     }
 
 }
