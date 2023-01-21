@@ -2,6 +2,7 @@ package com.maradamark09.typingspeedtest.word;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maradamark09.typingspeedtest.difficulty.Difficulty;
+import com.maradamark09.typingspeedtest.difficulty.DifficultyNotFoundException;
 import com.maradamark09.typingspeedtest.exception.ResourceAlreadyExistsException;
 import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
 import com.maradamark09.typingspeedtest.jwt.JWTAuthFilter;
@@ -57,15 +58,14 @@ class WordControllerTest {
     public void whenGetAllByInvalidDifficulty_thenReturns404() throws Exception {
 
         var difficulty = "idk";
-        var message = "test";
 
-        doThrow(new ResourceNotFoundException(message))
+        doThrow(new DifficultyNotFoundException())
                 .when(wordService)
                 .getAllByDifficulty(difficulty);
 
         mockMvc.perform(MockMvcRequestBuilders.get(CONTROLLER_PATH +"/{difficulty}", difficulty))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString(message)));
+                .andExpect(content().string(containsString("\"The given difficulty ")));
 
     }
 
@@ -87,13 +87,13 @@ class WordControllerTest {
     public void whenDeleteByNonExistingId_thenReturns404() throws Exception {
         long id = 929349L;
 
-        doThrow(new ResourceNotFoundException("test"))
+        doThrow(new WordNotFoundException(id))
                 .when(wordService)
                 .deleteById(id);
 
         mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/{id}", id))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("test")));
+                .andExpect(content().string(containsString("\"The given word with")));
 
     }
 
@@ -124,7 +124,7 @@ class WordControllerTest {
     }
 
     @Test
-    public void whenSaveWithNullValue_thenReturns400() throws Exception {
+    public void whenSaveWithNullValue_thenReturns422() throws Exception {
 
         WordRequest request = new WordRequest(null, 3L);
 
@@ -132,7 +132,7 @@ class WordControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .characterEncoding("utf-8"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
 
     }
 
@@ -141,7 +141,7 @@ class WordControllerTest {
 
         WordRequest request = new WordRequest("test", 3L);
 
-        doThrow(new ResourceAlreadyExistsException("test"))
+        doThrow(new WordAlreadyExistsException(request.value()))
                 .when(wordService).save(any(WordRequest.class));
 
         mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)

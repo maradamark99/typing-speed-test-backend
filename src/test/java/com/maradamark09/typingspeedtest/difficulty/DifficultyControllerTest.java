@@ -2,7 +2,6 @@ package com.maradamark09.typingspeedtest.difficulty;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maradamark09.typingspeedtest.exception.ResourceAlreadyExistsException;
-import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
 import com.maradamark09.typingspeedtest.jwt.JWTAuthFilter;
 import org.junit.jupiter.api.Test;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -77,7 +76,7 @@ public class DifficultyControllerTest {
     }
 
     @Test
-    public void whenSaveWithInvalidValue_thenReturns400() throws Exception {
+    public void whenSaveWithInvalidValue_thenReturns422() throws Exception {
 
         DifficultyRequest request = new DifficultyRequest("as", (byte) 99);
 
@@ -85,7 +84,7 @@ public class DifficultyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .characterEncoding("utf-8"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
 
     }
 
@@ -94,15 +93,14 @@ public class DifficultyControllerTest {
 
         DifficultyRequest request = new DifficultyRequest("random", (byte) 1);
 
-        doThrow(new ResourceAlreadyExistsException("The provided difficulty {" + request.value()
-                + "} already exists.")).when(difficultyService).save(any(DifficultyRequest.class));
+        doThrow(new DifficultyAlreadyExistsException(request.value())).when(difficultyService).save(any(DifficultyRequest.class));
 
         mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .characterEncoding("utf-8"))
                 .andExpect(status().isConflict())
-                .andExpect(content().string(containsString("\"The provided difficulty")));
+                .andExpect(content().string(containsString("\"The given difficulty")));
 
     }
 
@@ -126,13 +124,13 @@ public class DifficultyControllerTest {
 
         long id = 99999L;
 
-        doThrow(new ResourceNotFoundException("The difficulty with the given id: {" + id + "} does not exist."))
+        doThrow(new DifficultyNotFoundException(id))
                 .when(difficultyService)
                 .deleteById(id);
 
         mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/{id}", id))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("\"The difficulty with the given id")));
+                .andExpect(content().string(containsString("\"The given difficulty")));
 
     }
 

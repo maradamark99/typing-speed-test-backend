@@ -1,7 +1,6 @@
 package com.maradamark09.typingspeedtest.difficulty;
 
 import com.maradamark09.typingspeedtest.exception.ResourceAlreadyExistsException;
-import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +20,7 @@ public class DifficultyServiceImpl implements DifficultyService {
     @Override
     public Difficulty save(DifficultyRequest difficultyRequest) {
         if(difficultyRepository.existsByValue(difficultyRequest.value()))
-            throw new ResourceAlreadyExistsException("The provided difficulty {" + difficultyRequest.value()
-                    + "} already exists.");
+            throw new DifficultyAlreadyExistsException(difficultyRequest.value());
 
         var difficultyToSave =
                 Difficulty.builder()
@@ -36,7 +34,7 @@ public class DifficultyServiceImpl implements DifficultyService {
     @Override
     public void deleteById(Long id) {
         if(!difficultyRepository.existsById(id))
-            throw new ResourceNotFoundException("The difficulty with the given id: {" + id + "} does not exist.");
+            throw new DifficultyNotFoundException(id);
         difficultyRepository.deleteById(id);
     }
 

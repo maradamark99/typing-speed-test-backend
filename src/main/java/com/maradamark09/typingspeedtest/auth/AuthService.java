@@ -28,7 +28,7 @@ public class AuthService {
 
         if(userRepository.findByEmail(registrationRequest.email()).isPresent()
                 || userRepository.findByUsername(registrationRequest.username()).isPresent())
-            throw new UserAlreadyExistsException("");
+            throw new UserAlreadyExistsException();
 
         var role = roleRepository.findByValueIgnoreCase("USER");
         var userToSave =

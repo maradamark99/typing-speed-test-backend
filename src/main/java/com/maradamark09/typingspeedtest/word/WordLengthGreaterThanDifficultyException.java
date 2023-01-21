@@ -1,4 +1,4 @@
-package com.maradamark09.typingspeedtest.exception;
+package com.maradamark09.typingspeedtest.word;
 
 import com.maradamark09.typingspeedtest.difficulty.Difficulty;
 public class WordLengthGreaterThanDifficultyException extends RuntimeException {

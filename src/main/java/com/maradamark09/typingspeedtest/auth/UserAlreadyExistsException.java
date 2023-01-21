@@ -1,7 +1,10 @@
 package com.maradamark09.typingspeedtest.auth;
 
-public class UserAlreadyExistsException extends RuntimeException {
-    public UserAlreadyExistsException(String message) {
-        super(message);
+import com.maradamark09.typingspeedtest.exception.ResourceAlreadyExistsException;
+
+public class UserAlreadyExistsException extends ResourceAlreadyExistsException {
+    private static final String resource = "user";
+    public UserAlreadyExistsException() {
+        super(resource);
     }
 }
