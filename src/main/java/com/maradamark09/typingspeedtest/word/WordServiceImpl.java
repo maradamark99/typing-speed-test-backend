@@ -4,7 +4,6 @@ import com.maradamark09.typingspeedtest.difficulty.DifficultyNotFoundException;
 import com.maradamark09.typingspeedtest.difficulty.DifficultyRepository;
 import com.maradamark09.typingspeedtest.exception.ResourceAlreadyExistsException;
 import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
-import com.maradamark09.typingspeedtest.exception.WordLengthGreaterThanDifficultyException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

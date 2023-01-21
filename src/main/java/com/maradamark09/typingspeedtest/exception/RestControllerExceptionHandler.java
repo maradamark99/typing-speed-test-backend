@@ -1,5 +1,6 @@
 package com.maradamark09.typingspeedtest.exception;
 
+import com.maradamark09.typingspeedtest.word.WordLengthGreaterThanDifficultyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;

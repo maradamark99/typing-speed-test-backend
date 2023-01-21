@@ -4,7 +4,6 @@ import com.maradamark09.typingspeedtest.difficulty.Difficulty;
 import com.maradamark09.typingspeedtest.difficulty.DifficultyRepository;
 import com.maradamark09.typingspeedtest.exception.ResourceAlreadyExistsException;
 import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
-import com.maradamark09.typingspeedtest.exception.WordLengthGreaterThanDifficultyException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
