@@ -7,11 +7,4 @@ public record DifficultyRequest(@NotNull @Length(
         min = 3,
         max = 255,
         message = "The length of the difficulty '${validatedValue}' must be between {min} and {max} characters."
-) String value, @NotNull Byte maxWordLength) {
-
-    public DifficultyRequest(String value, Byte maxWordLength) {
-        this.value = value.toLowerCase();
-        this.maxWordLength = maxWordLength;
-    }
-
-}
+) String value, @NotNull Byte maxWordLength) { }
