@@ -34,10 +34,10 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests((auth) ->
                         auth
-                        .requestMatchers(HttpMethod.POST, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/difficulties/**", "/api/v1/words/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/difficulties/**", "/api/v1/words/**", "/api/v1/results/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/difficulties/**", "/api/v1/words/**", "/api/v1/results/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/difficulties/**", "/api/v1/words/**", "/api/v1/results/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/difficulties/**", "/api/v1/words/**", "/api/v1/results/**").permitAll()
                         .requestMatchers("/api/v1/auth/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated()
                 )
