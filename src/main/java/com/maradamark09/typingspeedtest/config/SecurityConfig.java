@@ -1,7 +1,9 @@
 package com.maradamark09.typingspeedtest.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maradamark09.typingspeedtest.exception.FilterChainExceptionHandler;
 import com.maradamark09.typingspeedtest.jwt.JWTAuthFilter;
+import com.maradamark09.typingspeedtest.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.Collection;
 
 
 @EnableWebSecurity
@@ -19,26 +22,27 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JWTAuthFilter jwtAuthFilter;
+    private final UserRepository userRepository;
+    private final ObjectMapper objectMapper;
 
-    private final FilterChainExceptionHandler filterChainExceptionHandler;
+    private final Collection<PublicEndpoint> publicEndpoints;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.cors().and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/v1/difficulties/**", "/api/v1/words/**").permitAll()
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/api/v1/auth/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(filterChainExceptionHandler, JWTAuthFilter.class)
+                .authorizeHttpRequests((auth) ->
+                        auth
+                        .requestMatchers(HttpMethod.POST, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/difficulties/**", "/api/v1/words/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(new JWTAuthFilter(userRepository, publicEndpoints), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new FilterChainExceptionHandler(objectMapper), JWTAuthFilter.class)
                 .build();
 
     }
