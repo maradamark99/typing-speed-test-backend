@@ -10,7 +10,7 @@ public interface ResultService {
 
     // TODO: more
 
-    List<Result> getAmountOf(Integer amount);
+    List<Result> getAmountOf(Integer page, Integer amount);
 
     List<Result> getByUserId(UUID userId) throws ResourceNotFoundException;
 
