@@ -14,10 +14,10 @@ public class WordController {
 
     private final WordService wordService;
 
-    @GetMapping("/{difficulty}/{amount}")
+    @GetMapping("/random/{difficulty}")
     public List<String> getRandomWordsByDifficulty(
             @PathVariable("difficulty") String difficulty,
-            @PathVariable("amount") Integer amount) {
+            @RequestParam(value = "amount", defaultValue = "1") Integer amount) {
         return wordService.getRandomWordsByDifficulty(difficulty, amount);
     }
 
