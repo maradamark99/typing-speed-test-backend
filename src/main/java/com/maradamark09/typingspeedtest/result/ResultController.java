@@ -17,13 +17,13 @@ public class ResultController {
     private final ResultService resultService;
 
     @GetMapping("/user/{id}")
-    public List<Result> getByUserId(@PathVariable("id") UUID userId) {
+    public List<ResultResponse> getByUserId(@PathVariable("id") UUID userId) {
         return resultService.getByUserId(userId);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Result> getAmountOf(@RequestParam(value = "page", defaultValue = "0") Integer page,
+    public List<ResultResponse> getAmountOf(@RequestParam(value = "page", defaultValue = "0") Integer page,
                                     @RequestParam(value = "amount", defaultValue = "10") Integer amount) {
         return resultService.getAmountOf(page, amount);
     }

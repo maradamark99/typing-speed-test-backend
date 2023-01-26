@@ -10,9 +10,9 @@ public interface ResultService {
 
     // TODO: more
 
-    List<Result> getAmountOf(Integer page, Integer amount);
+    List<ResultResponse> getAmountOf(Integer page, Integer amount);
 
-    List<Result> getByUserId(UUID userId) throws ResourceNotFoundException;
+    List<ResultResponse> getByUserId(UUID userId) throws ResourceNotFoundException;
 
     void save(ResultRequest resultRequest) throws ResourceAlreadyExistsException;
 
