@@ -3,9 +3,7 @@ package com.maradamark09.typingspeedtest.result;
 import com.maradamark09.typingspeedtest.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.hibernate.validator.constraints.Range;
 
 import java.math.BigDecimal;
@@ -15,6 +13,7 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name = "results")
 @Builder
+@Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Result {
