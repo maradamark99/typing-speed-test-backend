@@ -43,7 +43,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         if(publicEndpointOptional.isEmpty())
             return false;
 
-        var methodRestrictions = publicEndpointOptional.get().getMethodRestrictions();
+        var methodRestrictions = publicEndpointOptional.get().getAllowedMethods();
 
         if(methodRestrictions.isEmpty())
             return true;
@@ -62,7 +62,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         var authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         // if the request doesn't contain an auth header or the value doesn't start with Bearer
-        // then invoke the next filter in the filter chain
+        // then return unauthorized
         if(!hasText(authHeader) || (hasText(authHeader) && !authHeader.startsWith(TOKEN_PREFIX))) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
