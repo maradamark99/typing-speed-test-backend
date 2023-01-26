@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -19,24 +20,39 @@ public class ResultServiceImpl implements ResultService{
     private final UserRepository userRepository;
 
     @Override
-    public List<Result> getAmountOf(Integer page, Integer amount) {
-        return resultRepository.findAll(PageRequest.of(page,amount)).toList();
+    public List<ResultResponse> getAmountOf(Integer page, Integer amount) {
+
+        var resultStream = resultRepository
+                .findAll(PageRequest.of(page,amount))
+                .getContent()
+                .stream();
+
+        return resultToResultResponseMapper(resultStream);
+
     }
 
     @Override
-    public List<Result> getByUserId(UUID userId) {
+    public List<ResultResponse> getByUserId(UUID userId) {
+
         if(!userRepository.existsById(userId))
             throw new ResourceNotFoundException("");
-        return resultRepository.findResultByUser(userId);
-    }
 
+        var resultStream = resultRepository
+                .findResultByUserId(userId)
+                .stream();
+
+        return resultToResultResponseMapper(resultStream);
+    }
     @Override
     public void save(ResultRequest resultRequest) {
 
-        var UUIDfromString = UUID.fromString(resultRequest.userId());
+        // check if the given user id matches the token
+        // or get user id from token
+
+        var UUIDFromString = UUID.fromString(resultRequest.userId());
 
         var user = userRepository
-                .findById(UUIDfromString)
+                .findById(UUIDFromString)
                 .orElseThrow(() -> new ResourceNotFoundException(""));
 
         var resultToSave =
@@ -57,4 +73,14 @@ public class ResultServiceImpl implements ResultService{
         resultRepository.deleteById(id);
     }
 
+    private List<ResultResponse> resultToResultResponseMapper(Stream<Result> resultStream) {
+        return resultStream.map(
+                r -> new ResultResponse(
+                        r.getId(),
+                        r.getWpm(),
+                        r.getAccuracy().doubleValue(),
+                        r.getUser().getUsername()
+                ))
+                .toList();
+    }
 }
