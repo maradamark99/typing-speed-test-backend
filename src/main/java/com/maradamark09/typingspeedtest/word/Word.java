@@ -22,6 +22,7 @@ public class Word {
     private Long id;
 
     @NotNull
+    @Column(unique = true)
     private String value;
 
     @ManyToOne
