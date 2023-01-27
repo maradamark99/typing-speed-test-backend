@@ -16,7 +16,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class User {
 
     @Id
@@ -30,7 +29,7 @@ public class User {
 
     private String password;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     @NotNull
     private Role role;
