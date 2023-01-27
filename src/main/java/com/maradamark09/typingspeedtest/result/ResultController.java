@@ -1,9 +1,11 @@
 package com.maradamark09.typingspeedtest.result;
 
 
+import com.maradamark09.typingspeedtest.user.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +32,8 @@ public class ResultController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@Valid @RequestBody ResultRequest resultRequest) {
-        resultService.save(resultRequest);
+    public void save(@Valid @RequestBody ResultRequest resultRequest, @AuthenticationPrincipal User user) {
+        resultService.save(resultRequest, user);
     }
 
     @DeleteMapping
