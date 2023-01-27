@@ -34,7 +34,8 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests((auth) ->
                         auth
-                        .requestMatchers(HttpMethod.POST, "/api/v1/difficulties/**", "/api/v1/words/**", "/api/v1/results/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/results/**").hasAuthority("USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/difficulties/**", "/api/v1/words/**", "/api/v1/results/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/difficulties/**", "/api/v1/words/**", "/api/v1/results/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/difficulties/**", "/api/v1/words/**", "/api/v1/results/**").permitAll()
