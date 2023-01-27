@@ -16,6 +16,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class User {
 
     @Id
@@ -35,7 +36,6 @@ public class User {
     private Role role;
 
     @OneToMany(mappedBy = "user")
-    @NotNull
     private Set<Result> results;
 
 }
