@@ -10,8 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -33,7 +31,6 @@ public class AuthService {
         var role = roleRepository.findByValueIgnoreCase("USER");
         var userToSave =
                 User.builder()
-                        .id(UUID.randomUUID())
                         .email(registrationRequest.email())
                         .username(registrationRequest.username())
                         .password(passwordEncoder.encode(registrationRequest.password()))
