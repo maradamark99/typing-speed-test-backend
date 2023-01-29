@@ -3,8 +3,6 @@ package com.maradamark09.typingspeedtest.word;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maradamark09.typingspeedtest.difficulty.Difficulty;
 import com.maradamark09.typingspeedtest.difficulty.DifficultyNotFoundException;
-import com.maradamark09.typingspeedtest.exception.ResourceAlreadyExistsException;
-import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
 import com.maradamark09.typingspeedtest.jwt.JWTAuthFilter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
