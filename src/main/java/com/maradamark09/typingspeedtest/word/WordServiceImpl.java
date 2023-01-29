@@ -4,6 +4,7 @@ import com.maradamark09.typingspeedtest.difficulty.DifficultyNotFoundException;
 import com.maradamark09.typingspeedtest.difficulty.DifficultyRepository;
 import com.maradamark09.typingspeedtest.exception.ResourceAlreadyExistsException;
 import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
+import com.maradamark09.typingspeedtest.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,17 @@ public class WordServiceImpl implements WordService{
 
     @Override
     public List<String> getAllByDifficulty(String difficulty) throws ResourceNotFoundException {
-        checkIfDifficultyExists(difficulty);
+        if(!difficultyRepository.existsByValue(difficulty.toLowerCase()))
+            throw new DifficultyNotFoundException();
         return wordRepository.findAllByDifficulty(difficulty);
     }
 
     @Override
     public List<String> getRandomWordsByDifficulty(String difficulty, Integer amount) throws ResourceNotFoundException {
-        checkIfDifficultyExists(difficulty);
+
+        if(!difficultyRepository.existsByValue(difficulty.toLowerCase()))
+            throw new DifficultyNotFoundException();
+
         return wordRepository.findRandomWordsByDifficulty(difficulty, Pageable.ofSize(amount));
     }
 
@@ -53,11 +58,6 @@ public class WordServiceImpl implements WordService{
     public void deleteById(Long id) throws ResourceNotFoundException {
         wordRepository.findById(id).orElseThrow(() -> new WordNotFoundException(id));
         wordRepository.deleteById(id);
-    }
-
-    private void checkIfDifficultyExists(String difficulty) throws ResourceNotFoundException {
-        if(!difficultyRepository.existsByValue(difficulty.toLowerCase()))
-            throw new DifficultyNotFoundException();
     }
 
 }

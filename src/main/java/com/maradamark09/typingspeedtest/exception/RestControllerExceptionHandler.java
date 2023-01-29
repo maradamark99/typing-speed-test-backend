@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestControllerAdvice
@@ -34,9 +33,11 @@ public class RestControllerExceptionHandler {
 
     @ExceptionHandler({
             HttpMessageNotReadableException.class,
-            MethodArgumentTypeMismatchException.class})
+            MethodArgumentTypeMismatchException.class,
+            IllegalArgumentException.class
+    })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public MyErrorResponse handleInvalidRequestBodyFormatException(Exception ex, WebRequest request){
+    public MyErrorResponse handleInvalidRequestBodyFormatException(Exception ex, WebRequest request) {
 
         final var status = HttpStatus.BAD_REQUEST;
 
@@ -81,13 +82,11 @@ public class RestControllerExceptionHandler {
     }
 
     public List<MyFieldError> getUsefulInfoFromFieldErrors(List<FieldError> fieldErrors) {
-        final var myFieldErrors = new ArrayList<MyFieldError>();
-        fieldErrors.forEach(x ->
-                myFieldErrors.add(
-                        new MyFieldError(x.getField(), x.getDefaultMessage())
-                )
-        );
-        return myFieldErrors;
+        return fieldErrors
+                .stream()
+                .map(
+                        f -> new MyFieldError(f.getField(), f.getDefaultMessage()))
+                .toList();
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
