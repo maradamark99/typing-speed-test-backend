@@ -3,10 +3,10 @@ package com.maradamark09.typingspeedtest.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
 
-    public ResourceNotFoundException(String resource) {
+    protected ResourceNotFoundException(String resource) {
         super(buildMessageWithoutId(resource));
     }
-    public ResourceNotFoundException(String resource, Object id){
+    protected ResourceNotFoundException(String resource, Object id){
         super(buildMessageWithId(resource,id));
     }
 

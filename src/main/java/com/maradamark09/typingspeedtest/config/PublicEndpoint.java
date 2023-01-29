@@ -16,6 +16,6 @@ public class PublicEndpoint {
      * Contains all the HTTP method names that are allowed without auth for the particular endpoint
      * if it is empty, then everything is allowed.
      */
-    private Set<HttpMethod> methodRestrictions;
+    private Set<HttpMethod> allowedMethods;
 
 }

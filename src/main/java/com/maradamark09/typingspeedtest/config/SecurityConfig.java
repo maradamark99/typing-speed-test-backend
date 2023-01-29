@@ -2,7 +2,7 @@ package com.maradamark09.typingspeedtest.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maradamark09.typingspeedtest.exception.FilterChainExceptionHandler;
-import com.maradamark09.typingspeedtest.jwt.JWTAuthFilter;
+import com.maradamark09.typingspeedtest.auth.JWTAuthFilter;
 import com.maradamark09.typingspeedtest.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -35,9 +35,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) ->
                         auth
                         .requestMatchers(HttpMethod.POST, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/difficulties/**", "/api/v1/words/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/difficulties/**", "/api/v1/words/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/results/**").hasAuthority("USER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/difficulties/**", "/api/v1/words/**", "/api/v1/results/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/difficulties/**", "/api/v1/words/**", "/api/v1/results/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/difficulties/**", "/api/v1/words/**", "/api/v1/results/**").permitAll()
                         .requestMatchers("/api/v1/auth/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated()
                 )

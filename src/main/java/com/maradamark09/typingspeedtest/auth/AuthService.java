@@ -1,6 +1,6 @@
 package com.maradamark09.typingspeedtest.auth;
 
-import com.maradamark09.typingspeedtest.jwt.JWTUtils;
+import com.maradamark09.typingspeedtest.util.JWTUtil;
 import com.maradamark09.typingspeedtest.role.RoleRepository;
 import com.maradamark09.typingspeedtest.user.User;
 import com.maradamark09.typingspeedtest.user.UserRepository;
@@ -9,8 +9,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +31,6 @@ public class AuthService {
         var role = roleRepository.findByValueIgnoreCase("USER");
         var userToSave =
                 User.builder()
-                        .id(UUID.randomUUID())
                         .email(registrationRequest.email())
                         .username(registrationRequest.username())
                         .password(passwordEncoder.encode(registrationRequest.password()))
@@ -51,6 +48,6 @@ public class AuthService {
                 )
         );
 
-        return JWTUtils.generateToken(loginRequest.username());
+        return JWTUtil.generateToken(loginRequest.username());
     }
 }

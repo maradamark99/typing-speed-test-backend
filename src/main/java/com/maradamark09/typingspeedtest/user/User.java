@@ -1,10 +1,12 @@
 package com.maradamark09.typingspeedtest.user;
 
+import com.maradamark09.typingspeedtest.result.Result;
 import com.maradamark09.typingspeedtest.role.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -17,6 +19,7 @@ import java.util.UUID;
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(unique = true)
@@ -27,11 +30,12 @@ public class User {
 
     private String password;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     @NotNull
     private Role role;
 
-
+    @OneToMany(mappedBy = "user")
+    private Set<Result> results;
 
 }

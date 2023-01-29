@@ -20,7 +20,7 @@ public class Role {
     @NotNull
     private String value;
 
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
     private Set<User> users;
 
 }
