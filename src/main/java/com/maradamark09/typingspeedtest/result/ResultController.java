@@ -2,6 +2,7 @@ package com.maradamark09.typingspeedtest.result;
 
 
 import com.maradamark09.typingspeedtest.user.User;
+import com.maradamark09.typingspeedtest.util.PaginationUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,9 +25,8 @@ public class ResultController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<ResultResponse> getAmountOf(@RequestParam(value = "page", defaultValue = "0") Integer page,
-                                    @RequestParam(value = "amount", defaultValue = "10") Integer amount) {
+    public List<ResultResponse> getAmountOf(@RequestParam(value = "page", defaultValue = PaginationUtil.DEFAULT_PAGE) Integer page,
+                                            @RequestParam(value = "amount", defaultValue = PaginationUtil.DEFAULT_AMOUNT) Integer amount) {
         return resultService.getAmountOf(page, amount);
     }
 

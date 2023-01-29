@@ -2,7 +2,7 @@ package com.maradamark09.typingspeedtest.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maradamark09.typingspeedtest.exception.FilterChainExceptionHandler;
-import com.maradamark09.typingspeedtest.jwt.JWTAuthFilter;
+import com.maradamark09.typingspeedtest.auth.JWTAuthFilter;
 import com.maradamark09.typingspeedtest.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

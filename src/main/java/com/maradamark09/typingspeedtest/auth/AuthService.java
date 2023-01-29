@@ -1,6 +1,6 @@
 package com.maradamark09.typingspeedtest.auth;
 
-import com.maradamark09.typingspeedtest.jwt.JWTUtils;
+import com.maradamark09.typingspeedtest.util.JWTUtil;
 import com.maradamark09.typingspeedtest.role.RoleRepository;
 import com.maradamark09.typingspeedtest.user.User;
 import com.maradamark09.typingspeedtest.user.UserRepository;
@@ -48,6 +48,6 @@ public class AuthService {
                 )
         );
 
-        return JWTUtils.generateToken(loginRequest.username());
+        return JWTUtil.generateToken(loginRequest.username());
     }
 }

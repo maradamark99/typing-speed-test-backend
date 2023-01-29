@@ -1,5 +1,6 @@
 package com.maradamark09.typingspeedtest.word;
 
+import com.maradamark09.typingspeedtest.util.PaginationUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ public class WordController {
     @GetMapping("/random/{difficulty}")
     public List<String> getRandomWordsByDifficulty(
             @PathVariable("difficulty") String difficulty,
-            @RequestParam(value = "amount", defaultValue = "1") Integer amount) {
+            @RequestParam(value = "amount", defaultValue = PaginationUtil.DEFAULT_AMOUNT) Integer amount) {
         return wordService.getRandomWordsByDifficulty(difficulty, amount);
     }
 

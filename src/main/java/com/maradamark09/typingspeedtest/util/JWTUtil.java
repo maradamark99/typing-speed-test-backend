@@ -1,11 +1,11 @@
-package com.maradamark09.typingspeedtest.jwt;
+package com.maradamark09.typingspeedtest.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import java.util.Date;
 
-public class JWTUtils {
+public class JWTUtil {
 
     // TODO: change this to an injected value
     private final static String SECRET = "+N$cB^N6Kx%K7Vzdnpu+Jg^qBnNBjA9b";

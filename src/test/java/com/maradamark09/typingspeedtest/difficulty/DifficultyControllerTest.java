@@ -1,7 +1,7 @@
 package com.maradamark09.typingspeedtest.difficulty;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.maradamark09.typingspeedtest.jwt.JWTAuthFilter;
+import com.maradamark09.typingspeedtest.auth.JWTAuthFilter;
 import org.junit.jupiter.api.Test;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.extension.ExtendWith;

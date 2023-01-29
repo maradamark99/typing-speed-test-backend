@@ -1,7 +1,8 @@
-package com.maradamark09.typingspeedtest.jwt;
+package com.maradamark09.typingspeedtest.auth;
 
 import com.maradamark09.typingspeedtest.config.PublicEndpoint;
 import com.maradamark09.typingspeedtest.user.UserRepository;
+import com.maradamark09.typingspeedtest.util.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +17,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import static com.maradamark09.typingspeedtest.jwt.JWTUtils.TOKEN_PREFIX;
+import static com.maradamark09.typingspeedtest.util.JWTUtil.TOKEN_PREFIX;
 import static org.springframework.util.StringUtils.hasText;
 
 import java.io.IOException;
@@ -84,7 +85,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     // decode and validate the token, then return an authentication object
     private UsernamePasswordAuthenticationToken getAuthentication(String encodedToken) {
 
-        var decodedToken = JWTUtils.decodeToken(encodedToken);
+        var decodedToken = JWTUtil.decodeToken(encodedToken);
         var user = decodedToken.getSubject();
 
         var userDetails = userRepository.findByUsername(user).orElse(null);
