@@ -48,6 +48,7 @@ public class AuthService {
                 )
         );
 
-        return JWTUtil.generateToken(loginRequest.username());
+        var token = JWTUtil.generateToken(loginRequest.username());
+        return "{\"token\": \"" + token + "\"}";
     }
 }
