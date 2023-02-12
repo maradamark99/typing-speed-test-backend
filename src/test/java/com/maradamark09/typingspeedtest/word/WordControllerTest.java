@@ -1,7 +1,6 @@
 package com.maradamark09.typingspeedtest.word;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.maradamark09.typingspeedtest.difficulty.Difficulty;
 import com.maradamark09.typingspeedtest.difficulty.DifficultyNotFoundException;
 import com.maradamark09.typingspeedtest.auth.JWTAuthFilter;
 import org.junit.jupiter.api.Test;
@@ -14,8 +13,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.Collections;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -45,7 +42,7 @@ class WordControllerTest {
     @Test
     public void whenGetAllByValidDifficulty_thenReturns200() throws Exception{
 
-        var difficulty = "easy";
+        var difficulty = WordDataProvider.VALID_DIFFICULTY;
 
         mockMvc.perform(MockMvcRequestBuilders.get(CONTROLLER_PATH +"/{difficulty}", difficulty))
                 .andExpect(status().isOk());
@@ -55,7 +52,7 @@ class WordControllerTest {
     @Test
     public void whenGetAllByInvalidDifficulty_thenReturns404() throws Exception {
 
-        var difficulty = "idk";
+        var difficulty = WordDataProvider.INVALID_DIFFICULTY;
 
         doThrow(new DifficultyNotFoundException())
                 .when(wordService)
@@ -69,7 +66,7 @@ class WordControllerTest {
 
     @Test
     public void whenDeleteByExistingId_thenReturns200() throws Exception {
-        long id = 1L;
+        long id = WordDataProvider.VALID_WORD_ID;
 
         doNothing()
                 .when(wordService)
@@ -83,7 +80,7 @@ class WordControllerTest {
 
     @Test
     public void whenDeleteByNonExistingId_thenReturns404() throws Exception {
-        long id = 929349L;
+        long id = WordDataProvider.VALID_WORD_ID;
 
         doThrow(new WordNotFoundException(id))
                 .when(wordService)
@@ -98,9 +95,8 @@ class WordControllerTest {
     @Test
     public void whenSaveWithValidValue_thenReturns201AndWord() throws Exception {
 
-        var request = new WordRequest("test", 1L);
-        var difficulty = new Difficulty(1L, "easy", (byte)12, Collections.emptySet());
-        var expected = new Word(1L, "test", difficulty);
+        var request = WordDataProvider.VALID_WORD_REQUEST;
+        var expected = WordDataProvider.WORD_ENTITY;
 
         when(wordService.save(any(WordRequest.class)))
                 .thenReturn(expected);
@@ -124,7 +120,7 @@ class WordControllerTest {
     @Test
     public void whenSaveWithNullValue_thenReturns422() throws Exception {
 
-        WordRequest request = new WordRequest(null, 3L);
+        WordRequest request = WordDataProvider.INVALID_WORD_REQUEST;
 
         mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -137,7 +133,7 @@ class WordControllerTest {
     @Test
     public void whenSaveWithAlreadyExistingValue_thenReturns409() throws Exception {
 
-        WordRequest request = new WordRequest("test", 3L);
+        WordRequest request = WordDataProvider.VALID_WORD_REQUEST;
 
         doThrow(new WordAlreadyExistsException(request.value()))
                 .when(wordService).save(any(WordRequest.class));
@@ -147,7 +143,7 @@ class WordControllerTest {
                         .content(objectMapper.writeValueAsString(request))
                         .characterEncoding("utf-8"))
                 .andExpect(status().isConflict())
-                .andExpect(content().string(containsString("test")));
+                .andExpect(content().string(containsString(request.value())));
 
     }
 

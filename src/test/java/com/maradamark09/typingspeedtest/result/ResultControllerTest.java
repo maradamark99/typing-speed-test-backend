@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maradamark09.typingspeedtest.auth.JWTAuthFilter;
 import com.maradamark09.typingspeedtest.auth.UserNotFoundException;
-import com.maradamark09.typingspeedtest.user.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -48,11 +47,9 @@ class ResultControllerTest {
     @Test
     public void whenGetByValidUserId_thenReturns200_andListOfResultResponse() throws Exception {
 
-        var validId = UUID.randomUUID();
+        var validId = ResultDataProvider.USER_ID;
 
-        var expected = List.of(
-                new ResultResponse(1L, (short) 65, 89.9, "john")
-        );
+        var expected = ResultDataProvider.LIST_OF_RESULT_RESPONSES;
 
         when(resultService.getByUserId(validId)).thenReturn(expected);
 
@@ -68,7 +65,7 @@ class ResultControllerTest {
 
     @Test
     public void whenGetByInvalidUserId_thenReturns404() throws Exception {
-        var invalidId = UUID.randomUUID();
+        var invalidId = ResultDataProvider.USER_ID;
 
         doThrow(new UserNotFoundException(invalidId)).when(resultService).getByUserId(any(UUID.class));
 
@@ -80,12 +77,10 @@ class ResultControllerTest {
 
     @Test
     public void whenGetAmountOfWithValidPage_thenReturns200_andListOfResultResponse() throws Exception {
-        var validPage = 2;
-        var validAmount = 3;
+        var validPage = ResultDataProvider.VALID_PAGE;
+        var validAmount = ResultDataProvider.VALID_AMOUNT;
 
-        var expected = List.of(
-                new ResultResponse(1L, (short) 65, 89.9, "john")
-        );
+        var expected = ResultDataProvider.LIST_OF_RESULT_RESPONSES;
 
         when(resultService.getAmountOf(validPage, validAmount)).thenReturn(expected);
 
@@ -101,8 +96,8 @@ class ResultControllerTest {
 
     @Test
     public void whenGetAmountOfWithValidPage_thenReturns400() throws Exception {
-        var invalidPage = -99;
-        var validAmount = 1;
+        var invalidPage = ResultDataProvider.INVALID_PAGE;
+        var validAmount = ResultDataProvider.INVALID_AMOUNT;
 
         doThrow(new IllegalArgumentException("The given page is invalid")).when(resultService).getAmountOf(invalidPage,validAmount);
 
@@ -116,8 +111,8 @@ class ResultControllerTest {
 
     @Test
     public void whenSaveWithValidValues_thenReturns201() throws Exception {
-        var resultRequest = new ResultRequest((short)85, 82.45);
-        var user = new User();
+        var resultRequest = ResultDataProvider.VALID_RESULT_REQUEST;
+        var user = ResultDataProvider.LOGGED_IN_USER;
 
         doNothing().when(resultService).save(resultRequest,user);
 
@@ -130,7 +125,7 @@ class ResultControllerTest {
 
     @Test
     public void whenSaveWithInvalidValues_thenReturns422() throws Exception {
-        var resultRequest = new ResultRequest(null, 711238.1233);
+        var resultRequest = ResultDataProvider.INVALID_RESULT_REQUEST;
 
         mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -141,7 +136,7 @@ class ResultControllerTest {
 
     @Test
     public void whenDeleteByExistingId_thenReturns200() throws Exception {
-        var validId = 1L;
+        var validId = ResultDataProvider.VALID_RESULT_ID;
 
         doNothing().when(resultService).deleteById(validId);
 
@@ -151,7 +146,7 @@ class ResultControllerTest {
 
     @Test
     public void whenDeleteByIdNonExistingId_thenReturns404() throws Exception {
-        var invalidId = -123L;
+        var invalidId = ResultDataProvider.INVALID_RESULT_ID;
 
         doThrow(new ResultNotFoundException(invalidId)).when(resultService).deleteById(invalidId);
 

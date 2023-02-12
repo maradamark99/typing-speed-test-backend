@@ -14,9 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-
-import java.util.Collections;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,8 +49,8 @@ public class DifficultyControllerTest {
     @Test
     public void whenSaveWithValidValue_thenReturns201AndDifficulty() throws Exception {
 
-        DifficultyRequest request = new DifficultyRequest("test", (byte) 10);
-        Difficulty expected = new Difficulty(1L, "test", (byte) 10, Collections.emptySet());
+        DifficultyRequest request = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
+        Difficulty expected = DifficultyDataProvider.DIFFICULTY_ENTITY;
 
         when(difficultyService.save(any(DifficultyRequest.class)))
                 .thenReturn(expected);
@@ -77,7 +74,7 @@ public class DifficultyControllerTest {
     @Test
     public void whenSaveWithInvalidValue_thenReturns422() throws Exception {
 
-        DifficultyRequest request = new DifficultyRequest("as", (byte) 99);
+        DifficultyRequest request = DifficultyDataProvider.INVALID_DIFFICULTY_REQUEST;
 
         mockMvc.perform(post(CONTROLLER_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -90,7 +87,7 @@ public class DifficultyControllerTest {
     @Test
     public void whenSaveWithAlreadyExistingValue_thenReturns409() throws Exception {
 
-        DifficultyRequest request = new DifficultyRequest("random", (byte) 1);
+        DifficultyRequest request = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
 
         doThrow(new DifficultyAlreadyExistsException(request.value())).when(difficultyService).save(any(DifficultyRequest.class));
 
@@ -106,7 +103,7 @@ public class DifficultyControllerTest {
     @Test
     public void whenDeleteByExistingId_thenReturns200() throws Exception {
 
-        long id = 1L;
+        long id = DifficultyDataProvider.DIFFICULTY_ID;
 
         doNothing()
                 .when(difficultyService)
@@ -121,7 +118,7 @@ public class DifficultyControllerTest {
     @Test
     public void whenDeleteByNonExistingId_thenReturns404() throws Exception {
 
-        long id = 99999L;
+        long id = DifficultyDataProvider.DIFFICULTY_ID;
 
         doThrow(new DifficultyNotFoundException(id))
                 .when(difficultyService)
@@ -135,9 +132,9 @@ public class DifficultyControllerTest {
 
     @Test
     public void whenUpdateWithValidValueAndId_thenReturns200() throws Exception {
-        long id = 9L;
-        DifficultyRequest request = new DifficultyRequest("yeah", (byte)99);
-        Difficulty expected = new Difficulty(id, "yeah", (byte)99, Collections.emptySet());
+        long id = DifficultyDataProvider.DIFFICULTY_ID;
+        DifficultyRequest request = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
+        Difficulty expected = DifficultyDataProvider.DIFFICULTY_ENTITY;
 
         when(difficultyService.update(any(DifficultyRequest.class), eq(id))).thenReturn(expected);
 
