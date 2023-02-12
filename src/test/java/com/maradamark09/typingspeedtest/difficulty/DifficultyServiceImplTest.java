@@ -8,8 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,11 +26,7 @@ class DifficultyServiceImplTest {
     @Test
     public void whenGetAll_thenSuccess() {
 
-        var expected = List.of(
-                new Difficulty(1L,"easy",(byte)10, Collections.emptySet()),
-                new Difficulty(2L,"medium",(byte)20, Collections.emptySet()),
-                new Difficulty(3L,"hard",(byte)30, Collections.emptySet())
-        );
+        var expected = DifficultyDataProvider.LIST_OF_DIFFICULTY_RESPONSES;
 
         when(difficultyRepository.findAll()).thenReturn(expected);
         var actual = difficultyService.findAll();
@@ -45,7 +39,7 @@ class DifficultyServiceImplTest {
     @Test
     public void whenDelete_andIdExists_thenSuccess() {
 
-        long id = 1L;
+        long id = DifficultyDataProvider.DIFFICULTY_ID;
 
         when(difficultyRepository.existsById(id)).thenReturn(true);
 
@@ -62,7 +56,7 @@ class DifficultyServiceImplTest {
     @Test
     public void whenDelete_andIdDoesNotExist_thenThrowsException() {
 
-        Long id = 1L;
+        Long id = DifficultyDataProvider.DIFFICULTY_ID;
         when(difficultyRepository.existsById(id)).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> difficultyService.deleteById(id));
@@ -73,7 +67,7 @@ class DifficultyServiceImplTest {
     @Test
     public void whenSave_andDifficultyNotExists_thenSuccess() {
 
-        DifficultyRequest difficultyRequest = new DifficultyRequest("Easy", (byte)5);
+        DifficultyRequest difficultyRequest = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
         when(difficultyRepository.existsByValue(difficultyRequest.value())).thenReturn(false);
 
         Difficulty difficultyToSave = Difficulty.builder()
@@ -81,17 +75,17 @@ class DifficultyServiceImplTest {
                 .maxWordLength(difficultyRequest.maxWordLength())
                 .build();
 
-        Difficulty savedDifficulty = Difficulty.builder()
+        Difficulty expected = Difficulty.builder()
                 .id(1L)
                 .value(difficultyRequest.value())
                 .maxWordLength(difficultyRequest.maxWordLength())
                 .build();
 
-        when(difficultyRepository.save(difficultyToSave)).thenReturn(savedDifficulty);
+        when(difficultyRepository.save(difficultyToSave)).thenReturn(expected);
 
-        Difficulty result = difficultyService.save(difficultyRequest);
+        Difficulty actual = difficultyService.save(difficultyRequest);
 
-        assertEquals(savedDifficulty, result);
+        assertEquals(expected, actual);
         verify(difficultyRepository).existsByValue(difficultyRequest.value());
         verify(difficultyRepository).save(difficultyToSave);
 
@@ -100,7 +94,7 @@ class DifficultyServiceImplTest {
     @Test
     public void whenSave_andDifficultyAlreadyExists_thenThrowsException() {
 
-        DifficultyRequest difficultyRequest = new DifficultyRequest("Easy", (byte)5);
+        DifficultyRequest difficultyRequest = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
         when(difficultyRepository.existsByValue(difficultyRequest.value())).thenReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> difficultyService.save(difficultyRequest));
@@ -113,8 +107,8 @@ class DifficultyServiceImplTest {
     @Test
     public void whenUpdate_andDifficultyExists_thenSuccess() {
 
-        Long id = 1L;
-        DifficultyRequest difficultyRequest = new DifficultyRequest("Easy", (byte)5);
+        Long id = DifficultyDataProvider.DIFFICULTY_ID_TO_UPDATE;
+        DifficultyRequest difficultyRequest = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
 
         Difficulty difficulty = Difficulty.builder()
                 .id(id)
@@ -143,8 +137,8 @@ class DifficultyServiceImplTest {
     @Test
     public void whenUpdate_andDifficultyNotExists_thenCreatesNewDifficulty() {
 
-        Long id = 1L;
-        DifficultyRequest difficultyRequest = new DifficultyRequest("Easy", (byte)5);
+        Long id = DifficultyDataProvider.DIFFICULTY_ID_TO_UPDATE;
+        DifficultyRequest difficultyRequest = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
         when(difficultyRepository.findById(id)).thenReturn(Optional.empty());
 
         Difficulty difficultyToSave = Difficulty.builder()
@@ -152,17 +146,17 @@ class DifficultyServiceImplTest {
                 .maxWordLength(difficultyRequest.maxWordLength())
                 .build();
 
-        Difficulty savedDifficulty = Difficulty.builder()
+        Difficulty expected = Difficulty.builder()
                 .id(id)
                 .value(difficultyRequest.value())
                 .maxWordLength(difficultyRequest.maxWordLength())
                 .build();
 
-        when(difficultyRepository.save(difficultyToSave)).thenReturn(savedDifficulty);
+        when(difficultyRepository.save(difficultyToSave)).thenReturn(expected);
 
-        Difficulty result = difficultyService.update(difficultyRequest, id);
+        Difficulty actual = difficultyService.update(difficultyRequest, id);
 
-        assertEquals(savedDifficulty, result);
+        assertEquals(expected, actual);
         verify(difficultyRepository).findById(id);
         verify(difficultyRepository).save(difficultyToSave);
 

@@ -1,0 +1,80 @@
+package com.maradamark09.typingspeedtest.result;
+
+import com.maradamark09.typingspeedtest.auth.UserNotFoundException;
+import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
+import com.maradamark09.typingspeedtest.user.UserRepository;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class ResultServiceImplTest {
+
+    @InjectMocks
+    private ResultServiceImpl resultService;
+    @Mock
+    private ResultRepository resultRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Test
+    public void whenGetAmountOf_andParametersInvalid_thenThrowsException() {
+        var exception = assertThrows(IllegalArgumentException.class, () ->  resultService.getAmountOf(ResultDataProvider.INVALID_PAGE, ResultDataProvider.INVALID_AMOUNT));
+        assertThat(exception.getMessage()).contains("The given page");
+    }
+
+    @Test
+    public void whenGetBy_userIdNotExists_thenThrowsException() {
+        var uuid = ResultDataProvider.USER_ID;
+        when(userRepository.existsById(uuid)).thenReturn(false);
+        var exception = assertThrows(UserNotFoundException.class, () -> resultService.getByUserId(uuid));
+        assertThat(exception.getMessage()).contains("The given user");
+    }
+
+
+    @Test
+    public void whenDelete_andIdExists_thenSuccess() {
+
+        when(resultRepository.existsById(ResultDataProvider.VALID_RESULT_ID)).thenReturn(true);
+
+        resultService.deleteById(ResultDataProvider.VALID_RESULT_ID);
+
+        verify(resultRepository).deleteById(ResultDataProvider.VALID_RESULT_ID);
+
+        when(resultRepository.existsById(ResultDataProvider.VALID_RESULT_ID)).thenReturn(false);
+
+        assertFalse(resultRepository.existsById(ResultDataProvider.VALID_RESULT_ID));
+
+    }
+
+    @Test
+    public void whenDelete_andIdDoesntExist_thenThrowsException() {
+        when(resultRepository.existsById(ResultDataProvider.INVALID_RESULT_ID)).thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> resultService.deleteById(ResultDataProvider.INVALID_RESULT_ID));
+        verify(resultRepository, never()).deleteById(ResultDataProvider.INVALID_RESULT_ID);
+    }
+
+    @Test
+    public void whenSave_withValidData_thenSuccess() {
+
+        resultService.save(ResultDataProvider.VALID_RESULT_REQUEST, ResultDataProvider.LOGGED_IN_USER);
+
+        ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
+        verify(resultRepository).save(resultCaptor.capture());
+
+        Result actual = resultCaptor.getValue();
+        assertEquals(actual.getWpm(), ResultDataProvider.VALID_RESULT_REQUEST.wpm());
+        assertEquals(actual.getAccuracy().doubleValue(), ResultDataProvider.VALID_RESULT_REQUEST.accuracy());
+        assertEquals(actual.getUser(), ResultDataProvider.LOGGED_IN_USER);
+    }
+
+}

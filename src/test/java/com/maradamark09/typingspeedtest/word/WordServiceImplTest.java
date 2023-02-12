@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,14 +31,15 @@ class WordServiceImplTest {
     @Test
     public void whenGetAllByDifficulty_andDifficultyExists_thenSuccess() {
 
-        String difficulty = "easy";
+        String difficulty = WordDataProvider.VALID_DIFFICULTY;
+        List<String> expected = WordDataProvider.WORD_RESPONSE;
+
         when(difficultyRepository.existsByValue(difficulty)).thenReturn(true);
-        List<String> expectedWords = List.of("word1", "word2", "word3");
-        when(wordRepository.findAllByDifficulty(difficulty)).thenReturn(expectedWords);
+        when(wordRepository.findAllByDifficulty(difficulty)).thenReturn(expected);
 
-        List<String> result = wordService.getAllByDifficulty(difficulty);
+        List<String> actual = wordService.getAllByDifficulty(difficulty);
 
-        assertEquals(expectedWords, result);
+        assertEquals(expected, actual);
         verify(difficultyRepository).existsByValue(difficulty);
         verify(wordRepository).findAllByDifficulty(difficulty);
 
@@ -48,7 +48,7 @@ class WordServiceImplTest {
     @Test
     public void whenGetAllByDifficulty_andDifficultyDoesNotExist_thenThrowsException() {
 
-        String difficulty = "easy";
+        String difficulty = WordDataProvider.VALID_DIFFICULTY;
         when(difficultyRepository.existsByValue(difficulty)).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> wordService.getAllByDifficulty(difficulty));
@@ -61,9 +61,9 @@ class WordServiceImplTest {
     @Test
     public void whenDeleteById_andWordExistsById_thenSuccess() {
 
-        long id = 1L;
+        long id = WordDataProvider.VALID_WORD_ID;
 
-        when(wordRepository.findById(id)).thenReturn(Optional.of(new Word()));
+        when(wordRepository.findById(id)).thenReturn(Optional.of(WordDataProvider.WORD_ENTITY));
 
         wordService.deleteById(id);
 
@@ -78,7 +78,7 @@ class WordServiceImplTest {
     @Test
     public void whenDeleteById_andWordDoesNotExistById_thenThrowsException() {
 
-        long id = 1L;
+        long id = WordDataProvider.VALID_WORD_ID;
         when(wordRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> wordService.deleteById(id));
@@ -89,10 +89,10 @@ class WordServiceImplTest {
     @Test
     public void whenSave_andDifficultyIdDoesNotExist_thenThrowsException() {
 
-        when(difficultyRepository.findById(anyLong())).thenReturn(Optional.empty());
+        WordRequest wordRequest = WordDataProvider.VALID_WORD_REQUEST;
+        Word word = WordDataProvider.WORD_ENTITY;
 
-        WordRequest wordRequest = new WordRequest("word", 99L);
-        Word word = new Word();
+        when(difficultyRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> wordService.save(wordRequest));
         verify(wordRepository, never()).save(word);
@@ -102,11 +102,11 @@ class WordServiceImplTest {
     @Test
     public void whenSave_andWordLengthGreaterThanDifficulty_thenThrowsException() {
 
-        Difficulty difficulty = new Difficulty(1L, "easy", (byte)5, Collections.emptySet());
-        Word word = new Word();
+        Difficulty difficulty = WordDataProvider.DIFFICULTY_ENTITY;
+        Word word = WordDataProvider.WORD_ENTITY;
+        WordRequest wordRequest = WordDataProvider.WORD_REQUEST_LONG_VALUE;
 
         when(difficultyRepository.findById(difficulty.getId())).thenReturn(Optional.of(difficulty));
-        WordRequest wordRequest = new WordRequest("iamverylong", difficulty.getId());
 
         assertThrows(WordLengthGreaterThanDifficultyException.class, () -> wordService.save(wordRequest));
         verify(wordRepository, never()).save(word);
@@ -116,13 +116,12 @@ class WordServiceImplTest {
     @Test
     public void whenSave_andWordAlreadyExists_thenThrowsException() {
 
-        Difficulty difficulty = new Difficulty(1L, "easy", (byte)5, Collections.emptySet());
-        Word word = new Word();
+        Difficulty difficulty = WordDataProvider.DIFFICULTY_ENTITY;
+        Word word = WordDataProvider.WORD_ENTITY;
+        WordRequest wordRequest = WordDataProvider.VALID_WORD_REQUEST;
 
         when(difficultyRepository.findById(difficulty.getId())).thenReturn(Optional.of(difficulty));
-        when(wordRepository.existsByValue("word")).thenReturn(true);
-
-        WordRequest wordRequest = new WordRequest("word", difficulty.getId());
+        when(wordRepository.existsByValue(word.getValue())).thenReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> wordService.save(wordRequest));
         verify(wordRepository, never()).save(word);
@@ -132,24 +131,23 @@ class WordServiceImplTest {
     @Test
     public void whenSave_andWordDoesNotExist_andIsValid_thenSuccess() {
 
-        Difficulty difficulty = new Difficulty(1L, "easy", (byte)5, Collections.emptySet());
+        Difficulty difficulty = WordDataProvider.DIFFICULTY_ENTITY;
+        WordRequest wordRequest = WordDataProvider.VALID_WORD_REQUEST;
+        Word expected = WordDataProvider.WORD_ENTITY;
 
         when(difficultyRepository.findById(difficulty.getId())).thenReturn(Optional.of(difficulty));
-        when(wordRepository.existsByValue("word")).thenReturn(false);
+        when(wordRepository.existsByValue(wordRequest.value())).thenReturn(false);
 
-        WordRequest wordRequest = new WordRequest("word", difficulty.getId());
         Word wordToSave = Word.builder()
                 .value(wordRequest.value())
                 .difficulty(difficulty)
                 .build();
 
-        Word savedWord = new Word(1L, "word", difficulty);
+        when(wordRepository.save(wordToSave)).thenReturn(expected);
 
-        when(wordRepository.save(wordToSave)).thenReturn(savedWord);
+        Word actual = wordService.save(wordRequest);
 
-        Word result = wordService.save(wordRequest);
-
-        assertEquals(savedWord, result);
+        assertEquals(expected, actual);
         verify(wordRepository).existsByValue(wordRequest.value());
         verify(wordRepository).save(wordToSave);
 
