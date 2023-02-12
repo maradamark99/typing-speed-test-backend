@@ -1,14 +1,1 @@
-spring:
-  datasource:
-    url: jdbc:mariadb://localhost:3306/typing_speed_test
-    driver-class-name: org.mariadb.jdbc.Driver
-    username: user
-    password: password # encoding it would be a better practice
 
-  jpa:
-    hibernate.ddl-auto: create
-    generate-ddl: true
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
