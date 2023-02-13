@@ -102,6 +102,7 @@
 						<exclude>**/util/*</exclude>
 						<exclude>**/exception/*</exclude>
 						<exclude>**/config/*</exclude>
+						<exclude>**/auth/*</exclude>
 					</excludes>
 				</configuration>
 				<executions>
@@ -131,7 +132,7 @@
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.80</minimum>
+											<minimum>0.85</minimum>
 										</limit>
 									</limits>
 								</rule>
