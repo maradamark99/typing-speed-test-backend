@@ -9,10 +9,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,7 +41,7 @@ class WordServiceImplTest {
 
         List<String> actual = wordService.getAllByDifficulty(difficulty);
 
-        assertEquals(expected, actual);
+        assertThat(actual).containsExactlyElementsOf(expected);
         verify(difficultyRepository).existsByValue(difficulty);
         verify(wordRepository).findAllByDifficulty(difficulty);
 
@@ -55,6 +57,20 @@ class WordServiceImplTest {
 
         verify(difficultyRepository).existsByValue(difficulty);
         verify(wordRepository, never()).findAllByDifficulty(difficulty);
+
+    }
+
+    @Test
+    public void whenGetRandomByDifficulty_andDifficultyDoesNotExist_thenThrowsException() {
+
+        String difficulty = WordDataProvider.VALID_DIFFICULTY;
+        int amount = WordDataProvider.AMOUNT_OF;
+        when(difficultyRepository.existsByValue(difficulty)).thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> wordService.getRandomWordsByDifficulty(difficulty, amount));
+
+        verify(difficultyRepository).existsByValue(difficulty);
+        verify(wordRepository, never()).findRandomWordsByDifficulty(difficulty, Pageable.ofSize(amount));
 
     }
 

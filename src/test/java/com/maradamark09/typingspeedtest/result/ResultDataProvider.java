@@ -2,8 +2,10 @@ package com.maradamark09.typingspeedtest.result;
 
 import com.maradamark09.typingspeedtest.user.User;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 class ResultDataProvider {
 
@@ -26,6 +28,27 @@ class ResultDataProvider {
     static final ResultRequest VALID_RESULT_REQUEST = new ResultRequest((short) 65, 75.55);
 
     static final ResultRequest INVALID_RESULT_REQUEST = new ResultRequest(null, 41232.23);
+
+    static final List<Result> LIST_OF_RESULT_ENTITIES = List.of(
+            Result.builder()
+                    .id(1L)
+                    .wpm((short) 65)
+                    .accuracy(BigDecimal.valueOf(89.9))
+                    .user(
+                            User.builder()
+                                    .username("john")
+                                    .build())
+                    .build(),
+            Result.builder()
+                    .id(2L)
+                    .wpm((short) 90)
+                    .accuracy(BigDecimal.valueOf(95.2))
+                    .user(
+                            User.builder()
+                                    .username("jane")
+                                    .build())
+                    .build()
+    );
 
     static final List<ResultResponse> LIST_OF_RESULT_RESPONSES = List.of(
             new ResultResponse(1L, (short) 65, 89.9, "john"),
