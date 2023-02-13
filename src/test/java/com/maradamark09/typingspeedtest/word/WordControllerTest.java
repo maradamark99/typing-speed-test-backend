@@ -65,7 +65,24 @@ class WordControllerTest {
     }
 
     @Test
+    public void whenGetRandomByInvalidDifficulty_thenReturns404() throws Exception {
+
+        var difficulty = WordDataProvider.INVALID_DIFFICULTY;
+        var amount = WordDataProvider.AMOUNT_OF;
+
+        doThrow(new DifficultyNotFoundException())
+                .when(wordService)
+                .getRandomWordsByDifficulty(difficulty, amount);
+
+        mockMvc.perform(MockMvcRequestBuilders.get(CONTROLLER_PATH +"/random/{difficulty}", difficulty).queryParam("amount", String.valueOf(amount)))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(containsString("\"The given difficulty ")));
+
+    }
+
+    @Test
     public void whenDeleteByExistingId_thenReturns200() throws Exception {
+
         long id = WordDataProvider.VALID_WORD_ID;
 
         doNothing()
@@ -80,6 +97,7 @@ class WordControllerTest {
 
     @Test
     public void whenDeleteByNonExistingId_thenReturns404() throws Exception {
+
         long id = WordDataProvider.VALID_WORD_ID;
 
         doThrow(new WordNotFoundException(id))

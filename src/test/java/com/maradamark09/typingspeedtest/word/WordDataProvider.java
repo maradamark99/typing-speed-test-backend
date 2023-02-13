@@ -7,6 +7,8 @@ import java.util.List;
 
 class WordDataProvider {
 
+    static final int AMOUNT_OF = 3;
+
     static final String VALID_DIFFICULTY = "easy";
 
     static final String INVALID_DIFFICULTY = "SOMETHING";
