@@ -9,6 +9,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,16 +28,38 @@ class ResultServiceImplTest {
 
     @Test
     public void whenGetAmountOf_andParametersInvalid_thenThrowsException() {
+
         var exception = assertThrows(IllegalArgumentException.class, () ->  resultService.getAmountOf(ResultDataProvider.INVALID_PAGE, ResultDataProvider.INVALID_AMOUNT));
         assertThat(exception.getMessage()).contains("The given page");
+
     }
 
     @Test
-    public void whenGetBy_userIdNotExists_thenThrowsException() {
+    public void whenGetByUserId_andUserExists_thenSuccess () {
+
+        var uuid = ResultDataProvider.USER_ID;
+        var expected = ResultDataProvider.LIST_OF_RESULT_RESPONSES;
+
+        when(userRepository.existsById(uuid)).thenReturn(true);
+
+        when(resultRepository.findResultByUserId(uuid)).thenReturn(ResultDataProvider.LIST_OF_RESULT_ENTITIES);
+
+        var actual = resultService.getByUserId(uuid);
+
+        verify(resultRepository).findResultByUserId(uuid);
+        assertThat(actual).containsExactlyElementsOf(expected);
+
+    }
+
+
+    @Test
+    public void whenGetByUserId_andUserIdNotExists_thenThrowsException() {
+
         var uuid = ResultDataProvider.USER_ID;
         when(userRepository.existsById(uuid)).thenReturn(false);
         var exception = assertThrows(UserNotFoundException.class, () -> resultService.getByUserId(uuid));
         assertThat(exception.getMessage()).contains("The given user");
+
     }
 
 
@@ -57,10 +80,12 @@ class ResultServiceImplTest {
 
     @Test
     public void whenDelete_andIdDoesntExist_thenThrowsException() {
+
         when(resultRepository.existsById(ResultDataProvider.INVALID_RESULT_ID)).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> resultService.deleteById(ResultDataProvider.INVALID_RESULT_ID));
         verify(resultRepository, never()).deleteById(ResultDataProvider.INVALID_RESULT_ID);
+
     }
 
     @Test
@@ -75,6 +100,7 @@ class ResultServiceImplTest {
         assertEquals(actual.getWpm(), ResultDataProvider.VALID_RESULT_REQUEST.wpm());
         assertEquals(actual.getAccuracy().doubleValue(), ResultDataProvider.VALID_RESULT_REQUEST.accuracy());
         assertEquals(actual.getUser(), ResultDataProvider.LOGGED_IN_USER);
+
     }
 
 }
