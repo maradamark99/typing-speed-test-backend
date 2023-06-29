@@ -1,10 +1,11 @@
 package com.maradamark09.typingspeedtest.result;
 
-
 import com.maradamark09.typingspeedtest.user.User;
-import com.maradamark09.typingspeedtest.util.PaginationUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springdoc.core.converters.models.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +26,8 @@ public class ResultController {
     }
 
     @GetMapping
-    public List<ResultResponse> getAmountOf(@RequestParam(value = "page", defaultValue = PaginationUtil.DEFAULT_PAGE) Integer page,
-                                            @RequestParam(value = "amount", defaultValue = PaginationUtil.DEFAULT_AMOUNT) Integer amount) {
-        return resultService.getAmountOf(page, amount);
+    public List<ResultResponse> getAmountOf(Pageable pageable) {
+        return resultService.getAmountOf(PageRequest.of(pageable.getPage(), pageable.getSize()));
     }
 
     @PostMapping
