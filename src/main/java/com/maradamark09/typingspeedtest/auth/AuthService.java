@@ -1,10 +1,12 @@
 package com.maradamark09.typingspeedtest.auth;
 
 import com.maradamark09.typingspeedtest.util.JWTUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maradamark09.typingspeedtest.role.RoleRepository;
 import com.maradamark09.typingspeedtest.user.User;
 import com.maradamark09.typingspeedtest.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,20 +24,21 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
 
+    private final ObjectMapper mapper;
+
     public void register(RegistrationRequest registrationRequest) {
 
-        if(userRepository.findByEmail(registrationRequest.email()).isPresent()
+        if (userRepository.findByEmail(registrationRequest.email()).isPresent()
                 || userRepository.findByUsername(registrationRequest.username()).isPresent())
             throw new UserAlreadyExistsException();
 
         var role = roleRepository.findByValueIgnoreCase("USER");
-        var userToSave =
-                User.builder()
-                        .email(registrationRequest.email())
-                        .username(registrationRequest.username())
-                        .password(passwordEncoder.encode(registrationRequest.password()))
-                        .role(role)
-                        .build();
+        var userToSave = User.builder()
+                .email(registrationRequest.email())
+                .username(registrationRequest.username())
+                .password(passwordEncoder.encode(registrationRequest.password()))
+                .role(role)
+                .build();
 
         userRepository.save(userToSave);
     }
@@ -44,11 +47,11 @@ public class AuthService {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.username(),
-                        loginRequest.password()
-                )
-        );
-
+                        loginRequest.password()));
         var token = JWTUtil.generateToken(loginRequest.username());
-        return "{\"token\": \"" + token + "\"}";
+        return mapper
+                .createObjectNode()
+                .put("token", token)
+                .toString();
     }
 }
