@@ -59,12 +59,8 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 			FilterChain filterChain) throws ServletException, IOException {
 
-		// get the authorization header from the request
 		var authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-		// if the request doesn't contain an auth header or the value doesn't start with
-		// Bearer
-		// then return unauthorized
 		if (!hasText(authHeader) || (hasText(authHeader) && !authHeader.startsWith(TOKEN_PREFIX))) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return;
@@ -81,7 +77,6 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
 	}
 
-	// decode and validate the token, then return an authentication object
 	private UsernamePasswordAuthenticationToken getAuthentication(String encodedToken) {
 
 		var decodedToken = JWTUtil.decodeToken(encodedToken);
