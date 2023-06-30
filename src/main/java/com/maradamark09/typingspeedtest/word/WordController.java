@@ -3,7 +3,9 @@ package com.maradamark09.typingspeedtest.word;
 import com.maradamark09.typingspeedtest.util.PaginationUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,27 +18,27 @@ public class WordController {
     private final WordService wordService;
 
     @GetMapping("/random/{difficulty}")
-    public List<String> getRandomWordsByDifficulty(
+    public ResponseEntity<List<String>> getRandomWordsByDifficulty(
             @PathVariable("difficulty") String difficulty,
             @RequestParam(value = "amount", defaultValue = PaginationUtil.DEFAULT_AMOUNT) Integer amount) {
-        return wordService.getRandomWordsByDifficulty(difficulty, amount);
+        return ResponseEntity.ok(wordService.getRandomWordsByDifficulty(difficulty, amount));
     }
 
     @GetMapping("/{difficulty}")
-    public List<String> getAllByDifficulty(@PathVariable("difficulty") String difficulty) {
-        return wordService.getAllByDifficulty(difficulty);
+    public ResponseEntity<List<String>> getAllByDifficulty(@PathVariable("difficulty") String difficulty) {
+        return ResponseEntity.ok(wordService.getAllByDifficulty(difficulty));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Word save(@Valid @RequestBody WordRequest word){
-        return wordService.save(word);
+    public ResponseEntity<Void> save(@Valid @RequestBody WordRequest word) {
+        wordService.save(word);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteById(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         wordService.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 
 }

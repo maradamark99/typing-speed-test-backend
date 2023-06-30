@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.core.converters.models.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,25 +22,27 @@ public class ResultController {
     private final ResultService resultService;
 
     @GetMapping("/user/{id}")
-    public List<ResultResponse> getByUserId(@PathVariable("id") UUID userId) {
-        return resultService.getByUserId(userId);
+    public ResponseEntity<List<ResultResponse>> getByUserId(@PathVariable("id") UUID userId) {
+        return ResponseEntity.ok(resultService.getByUserId(userId));
     }
 
     @GetMapping
-    public List<ResultResponse> getAmountOf(Pageable pageable) {
-        return resultService.getAmountOf(PageRequest.of(pageable.getPage(), pageable.getSize()));
+    public ResponseEntity<List<ResultResponse>> getAmountOf(Pageable pageable) {
+        return ResponseEntity.ok(
+                resultService.getAmountOf(PageRequest.of(pageable.getPage(), pageable.getSize())));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void save(@Valid @RequestBody ResultRequest resultRequest, @AuthenticationPrincipal User user) {
+    public ResponseEntity<Void> save(@Valid @RequestBody ResultRequest resultRequest,
+            @AuthenticationPrincipal User user) {
         resultService.save(resultRequest, user);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteById(Long id) {
+    public ResponseEntity<Void> deleteById(Long id) {
         resultService.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 
 }
