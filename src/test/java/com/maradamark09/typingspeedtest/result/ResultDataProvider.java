@@ -5,7 +5,6 @@ import com.maradamark09.typingspeedtest.user.User;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 class ResultDataProvider {
 

@@ -1,11 +1,8 @@
 package com.maradamark09.typingspeedtest.config;
 
 import com.maradamark09.typingspeedtest.exception.FilterChainExceptionHandler;
-import com.maradamark09.typingspeedtest.user.UserRepository;
 import com.maradamark09.typingspeedtest.auth.JWTAuthFilter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
