@@ -42,7 +42,7 @@ public class ResultController {
     @DeleteMapping
     public ResponseEntity<Void> deleteById(Long id) {
         resultService.deleteById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }
