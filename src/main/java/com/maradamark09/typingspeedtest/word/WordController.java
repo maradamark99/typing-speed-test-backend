@@ -30,15 +30,14 @@ public class WordController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> save(@Valid @RequestBody WordRequest word) {
-        wordService.save(word);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<Word> save(@Valid @RequestBody WordRequest word) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(wordService.save(word));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         wordService.deleteById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }
