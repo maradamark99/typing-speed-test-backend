@@ -23,13 +23,10 @@ public class UserDetailsImpl implements UserDetails {
     private boolean isEnabled;
     private Set<GrantedAuthority> grantedAuthorities;
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return grantedAuthorities;
     }
-
-
 
     public UserDetailsImpl(String username, String password, Set<GrantedAuthority> authorities) {
         this.username = username;
@@ -43,14 +40,12 @@ public class UserDetailsImpl implements UserDetails {
 
     public static UserDetailsImpl build(User user) {
         var role = new SimpleGrantedAuthority(
-            user.getRole().getValue()
-        );
+                user.getRole().getValue());
 
         return new UserDetailsImpl(
                 user.getUsername(),
                 user.getPassword(),
-                Collections.singleton(role)
-            );
+                Collections.singleton(role));
 
     }
 

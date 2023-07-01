@@ -13,7 +13,8 @@ public class PublicEndpoint {
     private String antPattern;
 
     /**
-     * Contains all the HTTP method names that are allowed without auth for the particular endpoint
+     * Contains all the HTTP method names that are allowed without auth for the
+     * particular endpoint
      * if it is empty, then everything is allowed.
      */
     private Set<HttpMethod> allowedMethods;

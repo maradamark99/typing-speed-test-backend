@@ -17,120 +17,119 @@ import java.util.List;
 @RestControllerAdvice
 public class RestControllerExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public MyErrorResponse handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+	@ExceptionHandler(ResourceNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public MyErrorResponse handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
 
-        final var status = HttpStatus.NOT_FOUND;
+		final var status = HttpStatus.NOT_FOUND;
 
-        return MyErrorResponse.builder()
-                .status(status)
-                .statusCode(status.value())
-                .message(ex.getMessage())
-                .resource(request.getDescription(false))
-                .build();
-    }
+		return MyErrorResponse.builder()
+				.status(status)
+				.statusCode(status.value())
+				.message(ex.getMessage())
+				.resource(request.getDescription(false))
+				.build();
+	}
 
-    @ExceptionHandler({
-            HttpMessageNotReadableException.class,
-            MethodArgumentTypeMismatchException.class,
-            IllegalArgumentException.class
-    })
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public MyErrorResponse handleInvalidRequestBodyFormatException(Exception ex, WebRequest request) {
+	@ExceptionHandler({
+			HttpMessageNotReadableException.class,
+			MethodArgumentTypeMismatchException.class,
+			IllegalArgumentException.class
+	})
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public MyErrorResponse handleInvalidRequestBodyFormatException(Exception ex, WebRequest request) {
 
-        final var status = HttpStatus.BAD_REQUEST;
+		final var status = HttpStatus.BAD_REQUEST;
 
-        return MyErrorResponse.builder()
-                .status(status)
-                .statusCode(status.value())
-                .message(ex.getMessage())
-                .resource(request.getDescription(false))
-                .build();
-    }
+		return MyErrorResponse.builder()
+				.status(status)
+				.statusCode(status.value())
+				.message(ex.getMessage())
+				.resource(request.getDescription(false))
+				.build();
+	}
 
-    @ExceptionHandler({
-            WordLengthGreaterThanDifficultyException.class,
-    })
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public MyErrorResponse handleInvalidWordLengthGreaterThanDifficultyException(
-            Exception ex, WebRequest request) {
+	@ExceptionHandler({
+			WordLengthGreaterThanDifficultyException.class,
+	})
+	@ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+	public MyErrorResponse handleInvalidWordLengthGreaterThanDifficultyException(
+			Exception ex, WebRequest request) {
 
-        final var status = HttpStatus.UNPROCESSABLE_ENTITY;
+		final var status = HttpStatus.UNPROCESSABLE_ENTITY;
 
-        return MyErrorResponse.builder()
-                .status(status)
-                .statusCode(status.value())
-                .message(ex.getMessage())
-                .resource(request.getDescription(false))
-                .build();
-    }
+		return MyErrorResponse.builder()
+				.status(status)
+				.statusCode(status.value())
+				.message(ex.getMessage())
+				.resource(request.getDescription(false))
+				.build();
+	}
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public MyErrorResponse handleMethodArgumentNotValidException(
-            MethodArgumentNotValidException ex, WebRequest request) {
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	@ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+	public MyErrorResponse handleMethodArgumentNotValidException(
+			MethodArgumentNotValidException ex, WebRequest request) {
 
-        final var status = HttpStatus.UNPROCESSABLE_ENTITY;
+		final var status = HttpStatus.UNPROCESSABLE_ENTITY;
 
-        return MyErrorResponse.builder()
-                .status(status)
-                .statusCode(status.value())
-                .resource(request.getDescription(false))
-                .fieldErrors(getUsefulInfoFromFieldErrors(ex.getFieldErrors()))
-                .build();
-    }
+		return MyErrorResponse.builder()
+				.status(status)
+				.statusCode(status.value())
+				.resource(request.getDescription(false))
+				.fieldErrors(getUsefulInfoFromFieldErrors(ex.getFieldErrors()))
+				.build();
+	}
 
-    public List<MyFieldError> getUsefulInfoFromFieldErrors(List<FieldError> fieldErrors) {
-        return fieldErrors
-                .stream()
-                .map(
-                        f -> new MyFieldError(f.getField(), f.getDefaultMessage()))
-                .toList();
-    }
+	public List<MyFieldError> getUsefulInfoFromFieldErrors(List<FieldError> fieldErrors) {
+		return fieldErrors
+				.stream()
+				.map(
+						f -> new MyFieldError(f.getField(), f.getDefaultMessage()))
+				.toList();
+	}
 
-    @ExceptionHandler(ResourceAlreadyExistsException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public MyErrorResponse handleResourceAlreadyExistsException(
-            ResourceAlreadyExistsException ex,
-            WebRequest request) {
+	@ExceptionHandler(ResourceAlreadyExistsException.class)
+	@ResponseStatus(HttpStatus.CONFLICT)
+	public MyErrorResponse handleResourceAlreadyExistsException(
+			ResourceAlreadyExistsException ex,
+			WebRequest request) {
 
-        final var status = HttpStatus.CONFLICT;
+		final var status = HttpStatus.CONFLICT;
 
-        return MyErrorResponse.builder()
-                .status(status)
-                .statusCode(status.value())
-                .message(ex.getMessage())
-                .resource(request.getDescription(false))
-                .build();
-    }
+		return MyErrorResponse.builder()
+				.status(status)
+				.statusCode(status.value())
+				.message(ex.getMessage())
+				.resource(request.getDescription(false))
+				.build();
+	}
 
-    @ExceptionHandler(BadCredentialsException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public MyErrorResponse handleBadCredentialsException(Exception ex, WebRequest request) {
-        final var status = HttpStatus.UNAUTHORIZED;
+	@ExceptionHandler(BadCredentialsException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public MyErrorResponse handleBadCredentialsException(Exception ex, WebRequest request) {
+		final var status = HttpStatus.UNAUTHORIZED;
 
-        return MyErrorResponse.builder()
-                .status(status)
-                .statusCode(status.value())
-                .message(ex.getMessage())
-                .resource(request.getDescription(false))
-                .build();
-    }
+		return MyErrorResponse.builder()
+				.status(status)
+				.statusCode(status.value())
+				.message(ex.getMessage())
+				.resource(request.getDescription(false))
+				.build();
+	}
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public MyErrorResponse handleGlobalException(Exception ex, WebRequest request) {
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public MyErrorResponse handleGlobalException(Exception ex, WebRequest request) {
 
-        final var status = HttpStatus.INTERNAL_SERVER_ERROR;
+		final var status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        return MyErrorResponse.builder()
-                .status(status)
-                .statusCode(status.value())
-                .message(ex.getMessage())
-                .resource(request.getDescription(false))
-                .build();
-    }
-
+		return MyErrorResponse.builder()
+				.status(status)
+				.statusCode(status.value())
+				.message(ex.getMessage())
+				.resource(request.getDescription(false))
+				.build();
+	}
 
 }
