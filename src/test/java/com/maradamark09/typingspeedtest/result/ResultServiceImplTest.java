@@ -29,13 +29,14 @@ class ResultServiceImplTest {
     @Test
     public void whenGetAmountOf_andParametersInvalid_thenThrowsException() {
 
-        var exception = assertThrows(IllegalArgumentException.class, () ->  resultService.getAmountOf(ResultDataProvider.INVALID_PAGE, ResultDataProvider.INVALID_AMOUNT));
-        assertThat(exception.getMessage()).contains("The given page");
+        var exception = assertThrows(IllegalArgumentException.class, () -> resultService.getAmountOf(PageRequest.of(
+                ResultDataProvider.INVALID_PAGE, ResultDataProvider.INVALID_SIZE)));
+        assertThat(exception.getMessage()).contains("Page index must not be");
 
     }
 
     @Test
-    public void whenGetByUserId_andUserExists_thenSuccess () {
+    public void whenGetByUserId_andUserExists_thenSuccess() {
 
         var uuid = ResultDataProvider.USER_ID;
         var expected = ResultDataProvider.LIST_OF_RESULT_RESPONSES;
@@ -51,7 +52,6 @@ class ResultServiceImplTest {
 
     }
 
-
     @Test
     public void whenGetByUserId_andUserIdNotExists_thenThrowsException() {
 
@@ -61,7 +61,6 @@ class ResultServiceImplTest {
         assertThat(exception.getMessage()).contains("The given user");
 
     }
-
 
     @Test
     public void whenDelete_andIdExists_thenSuccess() {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maradamark09.typingspeedtest.auth.JWTAuthFilter;
 import com.maradamark09.typingspeedtest.auth.UserNotFoundException;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -58,7 +60,8 @@ class ResultControllerTest {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        var actual = objectMapper.readValue(content, new TypeReference<List<ResultResponse>>() {});
+        var actual = objectMapper.readValue(content, new TypeReference<List<ResultResponse>>() {
+        });
 
         assertEquals(expected, actual);
     }
@@ -78,17 +81,17 @@ class ResultControllerTest {
     @Test
     public void whenGetAmountOfWithValidPage_thenReturns200_andListOfResultResponse() throws Exception {
         var validPage = ResultDataProvider.VALID_PAGE;
-        var validAmount = ResultDataProvider.VALID_AMOUNT;
+        var validSize = ResultDataProvider.VALID_SIZE;
 
         var expected = ResultDataProvider.LIST_OF_RESULT_RESPONSES;
 
-        when(resultService.getAmountOf(validPage, validAmount)).thenReturn(expected);
+        when(resultService.getAmountOf(PageRequest.of(validPage, validSize))).thenReturn(expected);
 
         var response = mockMvc.perform(MockMvcRequestBuilders.get(CONTROLLER_PATH)
-                            .queryParam("page", String.valueOf(validPage))
-                            .queryParam("amount", String.valueOf(validAmount)))
-                            .andExpect(status().isOk())
-                            .andReturn().getResponse();
+                .queryParam("page", String.valueOf(validPage))
+                .queryParam("size", String.valueOf(validSize)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
 
         assertEquals(response.getContentAsString(), objectMapper.writeValueAsString(expected));
 
@@ -97,16 +100,12 @@ class ResultControllerTest {
     @Test
     public void whenGetAmountOfWithValidPage_thenReturns400() throws Exception {
         var invalidPage = ResultDataProvider.INVALID_PAGE;
-        var validAmount = ResultDataProvider.INVALID_AMOUNT;
-
-        doThrow(new IllegalArgumentException("The given page is invalid")).when(resultService).getAmountOf(invalidPage,validAmount);
+        var invalidSize = ResultDataProvider.INVALID_SIZE;
 
         mockMvc.perform(MockMvcRequestBuilders.get(CONTROLLER_PATH)
-                        .queryParam("page", String.valueOf(invalidPage))
-                        .queryParam("amount", String.valueOf(validAmount)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("\"The given page is invalid")));
-
+                .queryParam("page", String.valueOf(invalidPage))
+                .queryParam("size", String.valueOf(invalidSize)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -114,7 +113,7 @@ class ResultControllerTest {
         var resultRequest = ResultDataProvider.VALID_RESULT_REQUEST;
         var user = ResultDataProvider.LOGGED_IN_USER;
 
-        doNothing().when(resultService).save(resultRequest,user);
+        doNothing().when(resultService).save(resultRequest, user);
 
         mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -128,20 +127,20 @@ class ResultControllerTest {
         var resultRequest = ResultDataProvider.INVALID_RESULT_REQUEST;
 
         mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(resultRequest))
-                        .characterEncoding("utf-8"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(resultRequest))
+                .characterEncoding("utf-8"))
                 .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
-    public void whenDeleteByExistingId_thenReturns200() throws Exception {
+    public void whenDeleteByExistingId_thenReturns204() throws Exception {
         var validId = ResultDataProvider.VALID_RESULT_ID;
 
         doNothing().when(resultService).deleteById(validId);
 
         mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH, validId))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test

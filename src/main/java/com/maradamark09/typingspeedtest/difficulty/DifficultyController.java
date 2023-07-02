@@ -1,7 +1,9 @@
 package com.maradamark09.typingspeedtest.difficulty;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -14,23 +16,25 @@ public class DifficultyController {
     private final DifficultyService difficultyService;
 
     @GetMapping
-    public List<Difficulty> getAll() { return difficultyService.findAll(); }
+    public ResponseEntity<List<Difficulty>> getAll() {
+        return ResponseEntity.ok(difficultyService.findAll());
+    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Difficulty save(@Valid @RequestBody DifficultyRequest request) {
-        return difficultyService.save(request);
+    public ResponseEntity<Difficulty> save(@Valid @RequestBody DifficultyRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(difficultyService.save(request));
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteById(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         difficultyService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
-    public Difficulty updateById(@Valid @RequestBody DifficultyRequest difficulty, @PathVariable("id") Long id) {
-        return difficultyService.update(difficulty, id);
+    public ResponseEntity<Difficulty> updateById(@Valid @RequestBody DifficultyRequest difficulty,
+            @PathVariable("id") Long id) {
+        return ResponseEntity.ok(difficultyService.update(difficulty, id));
     }
 
 }

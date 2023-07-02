@@ -20,149 +20,148 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @WebMvcTest(WordController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 class WordControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+	@Autowired
+	private ObjectMapper objectMapper;
 
-    @MockBean
-    private WordService wordService;
+	@MockBean
+	private WordService wordService;
 
-    @MockBean
-    private JWTAuthFilter jwtAuthFilter;
+	@MockBean
+	private JWTAuthFilter jwtAuthFilter;
 
-    private static final String CONTROLLER_PATH = "/api/v1/words";
-    @Test
-    public void whenGetAllByValidDifficulty_thenReturns200() throws Exception{
+	private static final String CONTROLLER_PATH = "/api/v1/words";
 
-        var difficulty = WordDataProvider.VALID_DIFFICULTY;
+	@Test
+	public void whenGetAllByValidDifficulty_thenReturns200() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get(CONTROLLER_PATH +"/{difficulty}", difficulty))
-                .andExpect(status().isOk());
+		var difficulty = WordDataProvider.VALID_DIFFICULTY;
 
-    }
+		mockMvc.perform(MockMvcRequestBuilders.get(CONTROLLER_PATH + "/{difficulty}", difficulty))
+				.andExpect(status().isOk());
 
-    @Test
-    public void whenGetAllByInvalidDifficulty_thenReturns404() throws Exception {
+	}
 
-        var difficulty = WordDataProvider.INVALID_DIFFICULTY;
+	@Test
+	public void whenGetAllByInvalidDifficulty_thenReturns404() throws Exception {
 
-        doThrow(new DifficultyNotFoundException())
-                .when(wordService)
-                .getAllByDifficulty(difficulty);
+		var difficulty = WordDataProvider.INVALID_DIFFICULTY;
 
-        mockMvc.perform(MockMvcRequestBuilders.get(CONTROLLER_PATH +"/{difficulty}", difficulty))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("\"The given difficulty ")));
+		doThrow(new DifficultyNotFoundException())
+				.when(wordService)
+				.getAllByDifficulty(difficulty);
 
-    }
+		mockMvc.perform(MockMvcRequestBuilders.get(CONTROLLER_PATH + "/{difficulty}", difficulty))
+				.andExpect(status().isNotFound())
+				.andExpect(content().string(containsString("\"The given difficulty ")));
 
-    @Test
-    public void whenGetRandomByInvalidDifficulty_thenReturns404() throws Exception {
+	}
 
-        var difficulty = WordDataProvider.INVALID_DIFFICULTY;
-        var amount = WordDataProvider.AMOUNT_OF;
+	@Test
+	public void whenGetRandomByInvalidDifficulty_thenReturns404() throws Exception {
 
-        doThrow(new DifficultyNotFoundException())
-                .when(wordService)
-                .getRandomWordsByDifficulty(difficulty, amount);
+		var difficulty = WordDataProvider.INVALID_DIFFICULTY;
+		var amount = WordDataProvider.AMOUNT_OF;
 
-        mockMvc.perform(MockMvcRequestBuilders.get(CONTROLLER_PATH +"/random/{difficulty}", difficulty).queryParam("amount", String.valueOf(amount)))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("\"The given difficulty ")));
+		doThrow(new DifficultyNotFoundException())
+				.when(wordService)
+				.getRandomWordsByDifficulty(difficulty, amount);
 
-    }
+		mockMvc.perform(MockMvcRequestBuilders.get(CONTROLLER_PATH + "/random/{difficulty}", difficulty)
+				.queryParam("amount", String.valueOf(amount)))
+				.andExpect(status().isNotFound())
+				.andExpect(content().string(containsString("\"The given difficulty ")));
 
-    @Test
-    public void whenDeleteByExistingId_thenReturns200() throws Exception {
+	}
 
-        long id = WordDataProvider.VALID_WORD_ID;
+	@Test
+	public void whenDeleteByExistingId_thenReturns204() throws Exception {
 
-        doNothing()
-                .when(wordService)
-                .deleteById(id);
+		long id = WordDataProvider.VALID_WORD_ID;
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/{id}", id))
-                .andExpect(status().isOk())
-                .andExpect(content().string(""));
+		doNothing()
+				.when(wordService)
+				.deleteById(id);
 
-    }
+		mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/{id}", id))
+				.andExpect(status().isNoContent())
+				.andExpect(content().string(""));
 
-    @Test
-    public void whenDeleteByNonExistingId_thenReturns404() throws Exception {
+	}
 
-        long id = WordDataProvider.VALID_WORD_ID;
+	@Test
+	public void whenDeleteByNonExistingId_thenReturns404() throws Exception {
 
-        doThrow(new WordNotFoundException(id))
-                .when(wordService)
-                .deleteById(id);
+		long id = WordDataProvider.VALID_WORD_ID;
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/{id}", id))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("\"The given word with")));
+		doThrow(new WordNotFoundException(id))
+				.when(wordService)
+				.deleteById(id);
 
-    }
+		mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/{id}", id))
+				.andExpect(status().isNotFound())
+				.andExpect(content().string(containsString("\"The given word with")));
 
-    @Test
-    public void whenSaveWithValidValue_thenReturns201AndWord() throws Exception {
+	}
 
-        var request = WordDataProvider.VALID_WORD_REQUEST;
-        var expected = WordDataProvider.WORD_ENTITY;
+	@Test
+	public void whenSaveWithValidValue_thenReturns201AndWord() throws Exception {
 
-        when(wordService.save(any(WordRequest.class)))
-                .thenReturn(expected);
+		var request = WordDataProvider.VALID_WORD_REQUEST;
+		var expected = WordDataProvider.WORD_ENTITY;
 
-        var result =
-                mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .characterEncoding("utf-8"))
-                        .andExpect(status().isCreated())
-                        .andReturn();
+		when(wordService.save(any(WordRequest.class)))
+				.thenReturn(expected);
 
-        var actual = result.getResponse().getContentAsString();
+		var result = mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))
+				.characterEncoding("utf-8"))
+				.andExpect(status().isCreated())
+				.andReturn();
 
-        assertThat(actual).isEqualToIgnoringWhitespace(
-                objectMapper.writeValueAsString(expected)
-        );
+		var actual = result.getResponse().getContentAsString();
 
-    }
+		assertThat(actual).isEqualToIgnoringWhitespace(
+				objectMapper.writeValueAsString(expected));
 
-    @Test
-    public void whenSaveWithNullValue_thenReturns422() throws Exception {
+	}
 
-        WordRequest request = WordDataProvider.INVALID_WORD_REQUEST;
+	@Test
+	public void whenSaveWithNullValue_thenReturns422() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-                .characterEncoding("utf-8"))
-                .andExpect(status().isUnprocessableEntity());
+		WordRequest request = WordDataProvider.INVALID_WORD_REQUEST;
 
-    }
+		mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))
+				.characterEncoding("utf-8"))
+				.andExpect(status().isUnprocessableEntity());
 
-    @Test
-    public void whenSaveWithAlreadyExistingValue_thenReturns409() throws Exception {
+	}
 
-        WordRequest request = WordDataProvider.VALID_WORD_REQUEST;
+	@Test
+	public void whenSaveWithAlreadyExistingValue_thenReturns409() throws Exception {
 
-        doThrow(new WordAlreadyExistsException(request.value()))
-                .when(wordService).save(any(WordRequest.class));
+		WordRequest request = WordDataProvider.VALID_WORD_REQUEST;
 
-        mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .characterEncoding("utf-8"))
-                .andExpect(status().isConflict())
-                .andExpect(content().string(containsString(request.value())));
+		doThrow(new WordAlreadyExistsException(request.value()))
+				.when(wordService).save(any(WordRequest.class));
 
-    }
+		mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))
+				.characterEncoding("utf-8"))
+				.andExpect(status().isConflict())
+				.andExpect(content().string(containsString(request.value())));
+
+	}
 
 }

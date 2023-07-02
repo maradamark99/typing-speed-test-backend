@@ -4,15 +4,14 @@ import com.maradamark09.typingspeedtest.exception.ResourceAlreadyExistsException
 import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
 import com.maradamark09.typingspeedtest.user.User;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.PageRequest;
+
 public interface ResultService {
 
-    // TODO: more
-
-    List<ResultResponse> getAmountOf(Integer page, Integer amount);
+    List<ResultResponse> getAmountOf(PageRequest pageRequest);
 
     List<ResultResponse> getByUserId(UUID userId) throws ResourceNotFoundException;
 

@@ -6,6 +6,8 @@ import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
 import java.util.List;
 
 public interface WordService {
+    Word getById(Long id) throws ResourceNotFoundException;
+
     List<String> getAllByDifficulty(String difficulty) throws ResourceNotFoundException;
 
     List<String> getRandomWordsByDifficulty(String difficulty, Integer amount) throws ResourceNotFoundException;
@@ -15,5 +17,4 @@ public interface WordService {
             ResourceAlreadyExistsException;
 
     void deleteById(Long id) throws ResourceNotFoundException;
-
 }

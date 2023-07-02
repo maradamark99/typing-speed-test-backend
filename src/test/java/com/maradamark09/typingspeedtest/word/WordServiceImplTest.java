@@ -79,7 +79,7 @@ class WordServiceImplTest {
 
         long id = WordDataProvider.VALID_WORD_ID;
 
-        when(wordRepository.findById(id)).thenReturn(Optional.of(WordDataProvider.WORD_ENTITY));
+        when(wordRepository.existsById(id)).thenReturn(true);
 
         wordService.deleteById(id);
 
@@ -95,7 +95,7 @@ class WordServiceImplTest {
     public void whenDeleteById_andWordDoesNotExistById_thenThrowsException() {
 
         long id = WordDataProvider.VALID_WORD_ID;
-        when(wordRepository.findById(id)).thenReturn(Optional.empty());
+        when(wordRepository.existsById(id)).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> wordService.deleteById(id));
         verify(wordRepository, never()).deleteById(id);

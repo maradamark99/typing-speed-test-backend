@@ -11,24 +11,23 @@ import java.util.List;
 @Repository
 public interface WordRepository extends JpaRepository<Word, Long> {
 
-    Boolean existsByValue(String value);
+        Boolean existsByValue(String value);
 
-    @Query(value = "SELECT w.value " +
-            "FROM Word w " +
-            "JOIN Difficulty d " +
-            "ON w.difficulty.id=d.id " +
-            "WHERE d.value=:difficulty " +
-            "ORDER BY RAND()")
-    List<String> findRandomWordsByDifficulty(
-            @Param("difficulty") String difficulty,
-            Pageable p);
+        @Query(value = "SELECT w.value " +
+                        "FROM Word w " +
+                        "JOIN Difficulty d " +
+                        "ON w.difficulty.id=d.id " +
+                        "WHERE d.value=:difficulty " +
+                        "ORDER BY RAND()")
+        List<String> findRandomWordsByDifficulty(
+                        @Param("difficulty") String difficulty,
+                        Pageable p);
 
-    @Query(value = "SELECT w.value " +
-            "FROM Word w " +
-            "JOIN Difficulty d " +
-            "ON w.difficulty.id=d.id " +
-            "WHERE d.value=:difficulty")
-    List<String> findAllByDifficulty(@Param("difficulty") String difficulty);
+        @Query(value = "SELECT w.value " +
+                        "FROM Word w " +
+                        "JOIN Difficulty d " +
+                        "ON w.difficulty.id=d.id " +
+                        "WHERE d.value=:difficulty")
+        List<String> findAllByDifficulty(@Param("difficulty") String difficulty);
 
 }
-
