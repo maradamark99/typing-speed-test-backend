@@ -1,6 +1,10 @@
 package com.maradamark09.typingspeedtest.word;
 
+import com.maradamark09.typingspeedtest.config.OpenAPIConfig;
 import com.maradamark09.typingspeedtest.util.PaginationUtil;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +21,7 @@ public class WordController {
 
     private final WordService wordService;
 
+    @Operation(summary = "Get randomized words of a given difficulty")
     @GetMapping("/random/{difficulty}")
     public ResponseEntity<List<String>> getRandomWordsByDifficulty(
             @PathVariable("difficulty") String difficulty,
@@ -24,16 +29,21 @@ public class WordController {
         return ResponseEntity.ok(wordService.getRandomWordsByDifficulty(difficulty, amount));
     }
 
+    @Operation(summary = "Get all words of a given difficulty")
     @GetMapping("/{difficulty}")
     public ResponseEntity<List<String>> getAllByDifficulty(@PathVariable("difficulty") String difficulty) {
         return ResponseEntity.ok(wordService.getAllByDifficulty(difficulty));
     }
 
+    @Operation(summary = "Save a word")
+    @SecurityRequirement(name = OpenAPIConfig.SECURITY_SCHEME_NAME)
     @PostMapping
     public ResponseEntity<Word> save(@Valid @RequestBody WordRequest word) {
         return ResponseEntity.status(HttpStatus.CREATED).body(wordService.save(word));
     }
 
+    @Operation(summary = "Delete a word by its id")
+    @SecurityRequirement(name = OpenAPIConfig.SECURITY_SCHEME_NAME)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         wordService.deleteById(id);

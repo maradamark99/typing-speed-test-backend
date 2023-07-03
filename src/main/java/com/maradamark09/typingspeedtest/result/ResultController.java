@@ -1,6 +1,10 @@
 package com.maradamark09.typingspeedtest.result;
 
+import com.maradamark09.typingspeedtest.config.OpenAPIConfig;
 import com.maradamark09.typingspeedtest.user.User;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -21,17 +25,21 @@ public class ResultController {
 
     private final ResultService resultService;
 
+    @Operation(summary = "Get results of a user by user id")
     @GetMapping("/user/{id}")
     public ResponseEntity<List<ResultResponse>> getByUserId(@PathVariable("id") UUID userId) {
         return ResponseEntity.ok(resultService.getByUserId(userId));
     }
 
+    @Operation(summary = "Get results by page")
     @GetMapping
     public ResponseEntity<List<ResultResponse>> getAmountOf(Pageable pageable) {
         return ResponseEntity.ok(
                 resultService.getAmountOf(PageRequest.of(pageable.getPage(), pageable.getSize())));
     }
 
+    @Operation(summary = "Save a result")
+    @SecurityRequirement(name = OpenAPIConfig.SECURITY_SCHEME_NAME)
     @PostMapping
     public ResponseEntity<Void> save(@Valid @RequestBody ResultRequest resultRequest,
             @AuthenticationPrincipal User user) {
@@ -39,8 +47,10 @@ public class ResultController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deleteById(Long id) {
+    @Operation(summary = "Delete a result by its id")
+    @SecurityRequirement(name = OpenAPIConfig.SECURITY_SCHEME_NAME)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         resultService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
