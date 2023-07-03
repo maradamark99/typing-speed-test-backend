@@ -139,7 +139,7 @@ class ResultControllerTest {
 
         doNothing().when(resultService).deleteById(validId);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH, validId))
+        mockMvc.perform(MockMvcRequestBuilders.delete(CONTROLLER_PATH + "/{id}", validId))
                 .andExpect(status().isNoContent());
     }
 
