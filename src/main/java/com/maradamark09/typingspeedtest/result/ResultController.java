@@ -27,13 +27,13 @@ public class ResultController {
 
     @Operation(summary = "Get results of a user by user id")
     @GetMapping("/user/{id}")
-    public ResponseEntity<List<ResultResponse>> getByUserId(@PathVariable("id") UUID userId) {
+    public ResponseEntity<List<ResultDTO>> getByUserId(@PathVariable("id") UUID userId) {
         return ResponseEntity.ok(resultService.getByUserId(userId));
     }
 
     @Operation(summary = "Get results by page")
     @GetMapping
-    public ResponseEntity<List<ResultResponse>> getAmountOf(Pageable pageable) {
+    public ResponseEntity<List<ResultDTO>> getAmountOf(Pageable pageable) {
         return ResponseEntity.ok(
                 resultService.getAmountOf(PageRequest.of(pageable.getPage(), pageable.getSize())));
     }
@@ -41,9 +41,9 @@ public class ResultController {
     @Operation(summary = "Save a result")
     @SecurityRequirement(name = OpenAPIConfig.SECURITY_SCHEME_NAME)
     @PostMapping
-    public ResponseEntity<Void> save(@Valid @RequestBody ResultRequest resultRequest,
+    public ResponseEntity<Void> save(@Valid @RequestBody ResultDTO resultDTO,
             @AuthenticationPrincipal User user) {
-        resultService.save(resultRequest, user);
+        resultService.save(resultDTO, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

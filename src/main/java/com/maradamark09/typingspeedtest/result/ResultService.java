@@ -11,12 +11,16 @@ import org.springframework.data.domain.PageRequest;
 
 public interface ResultService {
 
-    List<ResultResponse> getAmountOf(PageRequest pageRequest);
+    List<ResultDTO> getAmountOf(PageRequest pageRequest);
 
-    List<ResultResponse> getByUserId(UUID userId) throws ResourceNotFoundException;
+    List<ResultDTO> getByUserId(UUID userId) throws ResourceNotFoundException;
 
-    void save(ResultRequest resultRequest, User user) throws ResourceAlreadyExistsException;
+    void save(ResultDTO resultRequest, User user) throws ResourceAlreadyExistsException;
 
     void deleteById(Long id) throws ResourceNotFoundException;
+
+    ResultDTO entityToDto(Result entity);
+
+    Result dtoToEntity(ResultDTO dto, User user);
 
 }

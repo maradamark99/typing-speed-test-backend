@@ -39,7 +39,7 @@ class ResultServiceImplTest {
     public void whenGetByUserId_andUserExists_thenSuccess() {
 
         var uuid = ResultDataProvider.USER_ID;
-        var expected = ResultDataProvider.LIST_OF_RESULT_RESPONSES;
+        var expected = ResultDataProvider.LIST_OF_RESULT_DTO;
 
         when(userRepository.existsById(uuid)).thenReturn(true);
 
@@ -90,14 +90,14 @@ class ResultServiceImplTest {
     @Test
     public void whenSave_withValidData_thenSuccess() {
 
-        resultService.save(ResultDataProvider.VALID_RESULT_REQUEST, ResultDataProvider.LOGGED_IN_USER);
+        resultService.save(ResultDataProvider.VALID_RESULT_DTO, ResultDataProvider.LOGGED_IN_USER);
 
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
         verify(resultRepository).save(resultCaptor.capture());
 
         Result actual = resultCaptor.getValue();
-        assertEquals(actual.getWpm(), ResultDataProvider.VALID_RESULT_REQUEST.wpm());
-        assertEquals(actual.getAccuracy().doubleValue(), ResultDataProvider.VALID_RESULT_REQUEST.accuracy());
+        assertEquals(actual.getWpm(), ResultDataProvider.VALID_RESULT_DTO.getWpm());
+        assertEquals(actual.getAccuracy().doubleValue(), ResultDataProvider.VALID_RESULT_DTO.getAccuracy());
         assertEquals(actual.getUser(), ResultDataProvider.LOGGED_IN_USER);
 
     }

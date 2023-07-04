@@ -24,9 +24,9 @@ class ResultDataProvider {
 
 	static final int INVALID_SIZE = -15;
 
-	static final ResultRequest VALID_RESULT_REQUEST = new ResultRequest((short) 65, 75.55);
+	static final ResultDTO VALID_RESULT_DTO = ResultDTO.builder().wpm((short) 65).accuracy(75.55).build();
 
-	static final ResultRequest INVALID_RESULT_REQUEST = new ResultRequest(null, 41232.23);
+	static final ResultDTO INVALID_RESULT_DTO = ResultDTO.builder().wpm(null).accuracy(41232.23).build();
 
 	static final List<Result> LIST_OF_RESULT_ENTITIES = List.of(
 			Result.builder()
@@ -48,9 +48,21 @@ class ResultDataProvider {
 									.build())
 					.build());
 
-	static final List<ResultResponse> LIST_OF_RESULT_RESPONSES = List.of(
-			new ResultResponse(1L, (short) 65, 89.9, "john"),
-			new ResultResponse(2L, (short) 90, 95.2, "jane"));
+	static final List<ResultDTO> LIST_OF_RESULT_DTO = List.of(
+			ResultDTO
+					.builder()
+					.id(1L)
+					.wpm((short) 65)
+					.accuracy(89.9)
+					.username("john")
+					.build(),
+			ResultDTO
+					.builder()
+					.id(2L)
+					.wpm((short) 90)
+					.accuracy(95.2)
+					.username("jane")
+					.build());
 
 	private ResultDataProvider() {
 
