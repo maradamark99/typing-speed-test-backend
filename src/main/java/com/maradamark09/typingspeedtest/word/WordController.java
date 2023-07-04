@@ -38,7 +38,7 @@ public class WordController {
     @Operation(summary = "Save a word")
     @SecurityRequirement(name = OpenAPIConfig.SECURITY_SCHEME_NAME)
     @PostMapping
-    public ResponseEntity<Word> save(@Valid @RequestBody WordRequest word) {
+    public ResponseEntity<WordDTO> save(@Valid @RequestBody WordDTO word) {
         return ResponseEntity.status(HttpStatus.CREATED).body(wordService.save(word));
     }
 

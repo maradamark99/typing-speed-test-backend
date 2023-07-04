@@ -4,6 +4,8 @@ import com.maradamark09.typingspeedtest.difficulty.Difficulty;
 import com.maradamark09.typingspeedtest.difficulty.DifficultyRepository;
 import com.maradamark09.typingspeedtest.exception.ResourceAlreadyExistsException;
 import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,6 +31,13 @@ class WordServiceImplTest {
 
     @Mock
     DifficultyRepository difficultyRepository;
+
+    private final WordMapper mapper = new WordMapper();
+
+    @BeforeEach
+    void init() {
+        wordService = new WordServiceImpl(mapper, wordRepository, difficultyRepository);
+    }
 
     @Test
     public void whenGetAllByDifficulty_andDifficultyExists_thenSuccess() {
@@ -105,7 +114,7 @@ class WordServiceImplTest {
     @Test
     public void whenSave_andDifficultyIdDoesNotExist_thenThrowsException() {
 
-        WordRequest wordRequest = WordDataProvider.VALID_WORD_REQUEST;
+        var wordRequest = WordDataProvider.VALID_WORD_REQUEST;
         Word word = WordDataProvider.WORD_ENTITY;
 
         when(difficultyRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -120,7 +129,7 @@ class WordServiceImplTest {
 
         Difficulty difficulty = WordDataProvider.DIFFICULTY_ENTITY;
         Word word = WordDataProvider.WORD_ENTITY;
-        WordRequest wordRequest = WordDataProvider.WORD_REQUEST_LONG_VALUE;
+        var wordRequest = WordDataProvider.WORD_REQUEST_LONG_VALUE;
 
         when(difficultyRepository.findById(difficulty.getId())).thenReturn(Optional.of(difficulty));
 
@@ -134,7 +143,7 @@ class WordServiceImplTest {
 
         Difficulty difficulty = WordDataProvider.DIFFICULTY_ENTITY;
         Word word = WordDataProvider.WORD_ENTITY;
-        WordRequest wordRequest = WordDataProvider.VALID_WORD_REQUEST;
+        var wordRequest = WordDataProvider.VALID_WORD_REQUEST;
 
         when(difficultyRepository.findById(difficulty.getId())).thenReturn(Optional.of(difficulty));
         when(wordRepository.existsByValue(word.getValue())).thenReturn(true);
@@ -147,24 +156,25 @@ class WordServiceImplTest {
     @Test
     public void whenSave_andWordDoesNotExist_andIsValid_thenSuccess() {
 
-        Difficulty difficulty = WordDataProvider.DIFFICULTY_ENTITY;
-        WordRequest wordRequest = WordDataProvider.VALID_WORD_REQUEST;
-        Word expected = WordDataProvider.WORD_ENTITY;
+        var difficulty = WordDataProvider.DIFFICULTY_ENTITY;
+        var wordRequest = WordDataProvider.VALID_WORD_REQUEST;
+        var expectedEntity = WordDataProvider.WORD_ENTITY;
 
         when(difficultyRepository.findById(difficulty.getId())).thenReturn(Optional.of(difficulty));
-        when(wordRepository.existsByValue(wordRequest.value())).thenReturn(false);
+        when(wordRepository.existsByValue(wordRequest.getValue())).thenReturn(false);
 
         Word wordToSave = Word.builder()
-                .value(wordRequest.value())
+                .value(wordRequest.getValue())
                 .difficulty(difficulty)
                 .build();
 
-        when(wordRepository.save(wordToSave)).thenReturn(expected);
+        when(wordRepository.save(wordToSave)).thenReturn(expectedEntity);
 
-        Word actual = wordService.save(wordRequest);
+        var expectedDTO = mapper.entityToDTO(expectedEntity);
+        var actual = wordService.save(wordRequest);
 
-        assertEquals(expected, actual);
-        verify(wordRepository).existsByValue(wordRequest.value());
+        assertEquals(expectedDTO, actual);
+        verify(wordRepository).existsByValue(wordRequest.getValue());
         verify(wordRepository).save(wordToSave);
 
     }

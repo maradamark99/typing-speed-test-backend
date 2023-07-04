@@ -3,6 +3,8 @@ package com.maradamark09.typingspeedtest.result;
 import com.maradamark09.typingspeedtest.auth.UserNotFoundException;
 import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
 import com.maradamark09.typingspeedtest.user.UserRepository;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -26,6 +28,13 @@ class ResultServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    private final ResultMapper mapper = new ResultMapper();
+
+    @BeforeEach
+    void setup() {
+        resultService = new ResultServiceImpl(mapper, resultRepository, userRepository);
+    }
+
     @Test
     public void whenGetAmountOf_andParametersInvalid_thenThrowsException() {
 
@@ -39,7 +48,7 @@ class ResultServiceImplTest {
     public void whenGetByUserId_andUserExists_thenSuccess() {
 
         var uuid = ResultDataProvider.USER_ID;
-        var expected = ResultDataProvider.LIST_OF_RESULT_RESPONSES;
+        var expected = ResultDataProvider.LIST_OF_RESULT_DTO;
 
         when(userRepository.existsById(uuid)).thenReturn(true);
 
@@ -90,14 +99,14 @@ class ResultServiceImplTest {
     @Test
     public void whenSave_withValidData_thenSuccess() {
 
-        resultService.save(ResultDataProvider.VALID_RESULT_REQUEST, ResultDataProvider.LOGGED_IN_USER);
+        resultService.save(ResultDataProvider.VALID_RESULT_DTO, ResultDataProvider.LOGGED_IN_USER);
 
         ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
         verify(resultRepository).save(resultCaptor.capture());
 
         Result actual = resultCaptor.getValue();
-        assertEquals(actual.getWpm(), ResultDataProvider.VALID_RESULT_REQUEST.wpm());
-        assertEquals(actual.getAccuracy().doubleValue(), ResultDataProvider.VALID_RESULT_REQUEST.accuracy());
+        assertEquals(actual.getWpm(), ResultDataProvider.VALID_RESULT_DTO.getWpm());
+        assertEquals(actual.getAccuracy().doubleValue(), ResultDataProvider.VALID_RESULT_DTO.getAccuracy());
         assertEquals(actual.getUser(), ResultDataProvider.LOGGED_IN_USER);
 
     }

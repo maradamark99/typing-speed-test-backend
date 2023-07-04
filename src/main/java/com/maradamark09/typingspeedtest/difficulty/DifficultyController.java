@@ -22,14 +22,14 @@ public class DifficultyController {
 
     @Operation(summary = "Get all difficulties")
     @GetMapping
-    public ResponseEntity<List<Difficulty>> getAll() {
+    public ResponseEntity<List<DifficultyDTO>> getAll() {
         return ResponseEntity.ok(difficultyService.findAll());
     }
 
     @Operation(summary = "Create a new difficulty")
     @SecurityRequirement(name = OpenAPIConfig.SECURITY_SCHEME_NAME)
     @PostMapping
-    public ResponseEntity<Difficulty> save(@Valid @RequestBody DifficultyRequest request) {
+    public ResponseEntity<DifficultyDTO> save(@Valid @RequestBody DifficultyDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(difficultyService.save(request));
     }
 
@@ -44,7 +44,7 @@ public class DifficultyController {
     @Operation(summary = "Update a difficulty by its id")
     @SecurityRequirement(name = OpenAPIConfig.SECURITY_SCHEME_NAME)
     @PutMapping("/{id}")
-    public ResponseEntity<Difficulty> updateById(@Valid @RequestBody DifficultyRequest difficulty,
+    public ResponseEntity<DifficultyDTO> updateById(@Valid @RequestBody DifficultyDTO difficulty,
             @PathVariable("id") Long id) {
         return ResponseEntity.ok(difficultyService.update(difficulty, id));
     }

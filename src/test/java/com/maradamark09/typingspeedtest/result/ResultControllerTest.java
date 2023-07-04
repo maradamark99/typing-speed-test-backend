@@ -51,7 +51,7 @@ class ResultControllerTest {
 
         var validId = ResultDataProvider.USER_ID;
 
-        var expected = ResultDataProvider.LIST_OF_RESULT_RESPONSES;
+        var expected = ResultDataProvider.LIST_OF_RESULT_DTO;
 
         when(resultService.getByUserId(validId)).thenReturn(expected);
 
@@ -60,7 +60,7 @@ class ResultControllerTest {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        var actual = objectMapper.readValue(content, new TypeReference<List<ResultResponse>>() {
+        var actual = objectMapper.readValue(content, new TypeReference<List<ResultDTO>>() {
         });
 
         assertEquals(expected, actual);
@@ -83,7 +83,7 @@ class ResultControllerTest {
         var validPage = ResultDataProvider.VALID_PAGE;
         var validSize = ResultDataProvider.VALID_SIZE;
 
-        var expected = ResultDataProvider.LIST_OF_RESULT_RESPONSES;
+        var expected = ResultDataProvider.LIST_OF_RESULT_DTO;
 
         when(resultService.getAmountOf(PageRequest.of(validPage, validSize))).thenReturn(expected);
 
@@ -110,7 +110,7 @@ class ResultControllerTest {
 
     @Test
     public void whenSaveWithValidValues_thenReturns201() throws Exception {
-        var resultRequest = ResultDataProvider.VALID_RESULT_REQUEST;
+        var resultRequest = ResultDataProvider.VALID_RESULT_DTO;
         var user = ResultDataProvider.LOGGED_IN_USER;
 
         doNothing().when(resultService).save(resultRequest, user);
@@ -124,7 +124,7 @@ class ResultControllerTest {
 
     @Test
     public void whenSaveWithInvalidValues_thenReturns422() throws Exception {
-        var resultRequest = ResultDataProvider.INVALID_RESULT_REQUEST;
+        var resultRequest = ResultDataProvider.INVALID_RESULT_DTO;
 
         mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
                 .contentType(MediaType.APPLICATION_JSON)

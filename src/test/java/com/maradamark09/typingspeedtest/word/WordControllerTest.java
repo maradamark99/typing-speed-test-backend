@@ -112,12 +112,17 @@ class WordControllerTest {
 	}
 
 	@Test
-	public void whenSaveWithValidValue_thenReturns201AndWord() throws Exception {
+	public void whenSaveWithValidValue_thenReturns201AndWordDTO() throws Exception {
 
 		var request = WordDataProvider.VALID_WORD_REQUEST;
-		var expected = WordDataProvider.WORD_ENTITY;
+		var expected = WordDTO
+				.builder()
+				.id(1L)
+				.value(request.getValue())
+				.difficulty_id(request.getDifficulty_id())
+				.build();
 
-		when(wordService.save(any(WordRequest.class)))
+		when(wordService.save(any(WordDTO.class)))
 				.thenReturn(expected);
 
 		var result = mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
@@ -137,7 +142,7 @@ class WordControllerTest {
 	@Test
 	public void whenSaveWithNullValue_thenReturns422() throws Exception {
 
-		WordRequest request = WordDataProvider.INVALID_WORD_REQUEST;
+		var request = WordDataProvider.INVALID_WORD_REQUEST;
 
 		mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -150,17 +155,17 @@ class WordControllerTest {
 	@Test
 	public void whenSaveWithAlreadyExistingValue_thenReturns409() throws Exception {
 
-		WordRequest request = WordDataProvider.VALID_WORD_REQUEST;
+		var request = WordDataProvider.VALID_WORD_REQUEST;
 
-		doThrow(new WordAlreadyExistsException(request.value()))
-				.when(wordService).save(any(WordRequest.class));
+		doThrow(new WordAlreadyExistsException(request.getValue()))
+				.when(wordService).save(any(WordDTO.class));
 
 		mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))
 				.characterEncoding("utf-8"))
 				.andExpect(status().isConflict())
-				.andExpect(content().string(containsString(request.value())));
+				.andExpect(content().string(containsString(request.getValue())));
 
 	}
 

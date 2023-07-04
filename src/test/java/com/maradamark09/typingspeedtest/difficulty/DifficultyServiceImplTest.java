@@ -2,12 +2,15 @@ package com.maradamark09.typingspeedtest.difficulty;
 
 import com.maradamark09.typingspeedtest.exception.ResourceAlreadyExistsException;
 import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,14 +26,22 @@ class DifficultyServiceImplTest {
     @Mock
     private DifficultyRepository difficultyRepository;
 
+    private final DifficultyMapper mapper = new DifficultyMapper();
+
+    @BeforeEach
+    void setup() {
+        difficultyService = new DifficultyServiceImpl(mapper, difficultyRepository);
+    }
 
     @Test
     public void whenGetAll_thenSuccess() {
 
-        var expected = DifficultyDataProvider.LIST_OF_DIFFICULTY_RESPONSES;
+        var expected = DifficultyDataProvider.LIST_OF_DIFFICULTIES;
 
         when(difficultyRepository.findAll()).thenReturn(expected);
-        var actual = difficultyService.findAll();
+        var actual = difficultyService.findAll().stream()
+                .map((d -> new Difficulty(d.getId(), d.getValue(), d.getMaxWordLength(), Collections.emptySet())))
+                .toList();
 
         assertThat(actual).containsExactlyElementsOf(expected);
         verify(difficultyRepository).findAll();
@@ -68,26 +79,26 @@ class DifficultyServiceImplTest {
     @Test
     public void whenSave_andDifficultyNotExists_thenSuccess() {
 
-        DifficultyRequest difficultyRequest = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
-        when(difficultyRepository.existsByValue(difficultyRequest.value())).thenReturn(false);
+        var difficultyDTO = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
+        when(difficultyRepository.existsByValue(difficultyDTO.getValue())).thenReturn(false);
 
-        Difficulty difficultyToSave = Difficulty.builder()
-                .value(difficultyRequest.value())
-                .maxWordLength(difficultyRequest.maxWordLength())
+        var difficultyToSave = Difficulty.builder()
+                .value(difficultyDTO.getValue())
+                .maxWordLength(difficultyDTO.getMaxWordLength())
                 .build();
 
-        Difficulty expected = Difficulty.builder()
+        var difficulty = Difficulty.builder()
                 .id(1L)
-                .value(difficultyRequest.value())
-                .maxWordLength(difficultyRequest.maxWordLength())
+                .value(difficultyDTO.getValue())
+                .maxWordLength(difficultyDTO.getMaxWordLength())
                 .build();
+        var expected = mapper.entityToDto(difficulty);
 
-        when(difficultyRepository.save(difficultyToSave)).thenReturn(expected);
+        when(difficultyRepository.save(difficultyToSave)).thenReturn(difficulty);
 
-        Difficulty actual = difficultyService.save(difficultyRequest);
-
+        var actual = difficultyService.save(difficultyDTO);
         assertEquals(expected, actual);
-        verify(difficultyRepository).existsByValue(difficultyRequest.value());
+        verify(difficultyRepository).existsByValue(difficultyDTO.getValue());
         verify(difficultyRepository).save(difficultyToSave);
 
     }
@@ -95,12 +106,12 @@ class DifficultyServiceImplTest {
     @Test
     public void whenSave_andDifficultyAlreadyExists_thenThrowsException() {
 
-        DifficultyRequest difficultyRequest = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
-        when(difficultyRepository.existsByValue(difficultyRequest.value())).thenReturn(true);
+        var difficultyDTO = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
+        when(difficultyRepository.existsByValue(difficultyDTO.getValue())).thenReturn(true);
 
-        assertThrows(ResourceAlreadyExistsException.class, () -> difficultyService.save(difficultyRequest));
+        assertThrows(ResourceAlreadyExistsException.class, () -> difficultyService.save(difficultyDTO));
 
-        verify(difficultyRepository).existsByValue(difficultyRequest.value());
+        verify(difficultyRepository).existsByValue(difficultyDTO.getValue());
         verify(difficultyRepository, never()).save(any());
 
     }
@@ -108,59 +119,36 @@ class DifficultyServiceImplTest {
     @Test
     public void whenUpdate_andDifficultyExists_thenSuccess() {
 
-        Long id = DifficultyDataProvider.DIFFICULTY_ID_TO_UPDATE;
-        DifficultyRequest difficultyRequest = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
+        var id = DifficultyDataProvider.DIFFICULTY_ID_TO_UPDATE;
+        var difficultyDTO = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
 
-        Difficulty difficulty = Difficulty.builder()
+        when(difficultyRepository.existsById(id)).thenReturn(true);
+
+        var expectedEntity = Difficulty.builder()
                 .id(id)
-                .value("Hard")
-                .maxWordLength((byte)10)
+                .value(difficultyDTO.getValue())
+                .maxWordLength(difficultyDTO.getMaxWordLength())
                 .build();
 
-        when(difficultyRepository.findById(id)).thenReturn(Optional.of(difficulty));
+        var expectedDTO = mapper.entityToDto(expectedEntity);
 
-        Difficulty updatedDifficulty = Difficulty.builder()
-                .id(id)
-                .value(difficultyRequest.value())
-                .maxWordLength(difficultyRequest.maxWordLength())
-                .build();
+        when(difficultyRepository.save(mapper.dtoToEntity(difficultyDTO))).thenReturn(expectedEntity);
 
-        when(difficultyRepository.save(difficulty)).thenReturn(updatedDifficulty);
+        var actual = difficultyService.update(difficultyDTO, id);
 
-        Difficulty result = difficultyService.update(difficultyRequest, id);
-
-        assertEquals(updatedDifficulty, result);
-        verify(difficultyRepository).findById(id);
-        verify(difficultyRepository).save(difficulty);
+        assertEquals(expectedDTO, actual);
 
     }
 
     @Test
-    public void whenUpdate_andDifficultyNotExists_thenCreatesNewDifficulty() {
+    public void whenUpdate_andDifficultyDoesntExist_thenThrowsDifficultyNotFoundException() {
 
-        Long id = DifficultyDataProvider.DIFFICULTY_ID_TO_UPDATE;
-        DifficultyRequest difficultyRequest = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
-        when(difficultyRepository.findById(id)).thenReturn(Optional.empty());
-
-        Difficulty difficultyToSave = Difficulty.builder()
-                .value(difficultyRequest.value())
-                .maxWordLength(difficultyRequest.maxWordLength())
-                .build();
-
-        Difficulty expected = Difficulty.builder()
-                .id(id)
-                .value(difficultyRequest.value())
-                .maxWordLength(difficultyRequest.maxWordLength())
-                .build();
-
-        when(difficultyRepository.save(difficultyToSave)).thenReturn(expected);
-
-        Difficulty actual = difficultyService.update(difficultyRequest, id);
-
-        assertEquals(expected, actual);
-        verify(difficultyRepository).findById(id);
-        verify(difficultyRepository).save(difficultyToSave);
-
+        var id = DifficultyDataProvider.DIFFICULTY_ID_TO_UPDATE;
+        var difficultyDTO = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
+        when(difficultyRepository.existsById(id)).thenReturn(false);
+        assertThrows(DifficultyNotFoundException.class,
+                () -> {
+                    difficultyService.update(difficultyDTO, id);
+                });
     }
-
 }
