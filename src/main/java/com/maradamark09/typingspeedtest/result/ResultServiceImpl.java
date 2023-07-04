@@ -8,13 +8,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ResultServiceImpl implements ResultService {
+
+    private final ResultMapper mapper;
 
     private final ResultRepository resultRepository;
 
@@ -25,7 +26,7 @@ public class ResultServiceImpl implements ResultService {
         return resultRepository
                 .findAll(pageRequest)
                 .stream()
-                .map((result) -> entityToDto(result))
+                .map(mapper::entityToDto)
                 .toList();
     }
 
@@ -37,13 +38,13 @@ public class ResultServiceImpl implements ResultService {
         return resultRepository
                 .findResultByUserId(userId)
                 .stream()
-                .map((result) -> entityToDto(result))
+                .map(mapper::entityToDto)
                 .toList();
     }
 
     @Override
     public void save(ResultDTO resultRequest, User user) {
-        resultRepository.save(dtoToEntity(resultRequest, user));
+        resultRepository.save(mapper.dtoToEntity(resultRequest, user));
     }
 
     @Override
@@ -53,23 +54,4 @@ public class ResultServiceImpl implements ResultService {
         resultRepository.deleteById(id);
     }
 
-    @Override
-    public ResultDTO entityToDto(Result entity) {
-        return ResultDTO
-                .builder()
-                .id(entity.getId())
-                .wpm(entity.getWpm())
-                .accuracy(entity.getAccuracy().doubleValue())
-                .username(entity.getUser().getUsername())
-                .build();
-    }
-
-    @Override
-    public Result dtoToEntity(ResultDTO dto, User user) {
-        return Result.builder()
-                .user(user)
-                .accuracy(BigDecimal.valueOf(dto.getAccuracy()))
-                .wpm(dto.getWpm())
-                .build();
-    }
 }

@@ -19,8 +19,4 @@ public interface ResultService {
 
     void deleteById(Long id) throws ResourceNotFoundException;
 
-    ResultDTO entityToDto(Result entity);
-
-    Result dtoToEntity(ResultDTO dto, User user);
-
 }

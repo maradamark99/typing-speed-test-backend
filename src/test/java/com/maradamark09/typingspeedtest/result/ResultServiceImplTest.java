@@ -3,6 +3,8 @@ package com.maradamark09.typingspeedtest.result;
 import com.maradamark09.typingspeedtest.auth.UserNotFoundException;
 import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
 import com.maradamark09.typingspeedtest.user.UserRepository;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -25,6 +27,13 @@ class ResultServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    private final ResultMapper mapper = new ResultMapper();
+
+    @BeforeEach
+    void setup() {
+        resultService = new ResultServiceImpl(mapper, resultRepository, userRepository);
+    }
 
     @Test
     public void whenGetAmountOf_andParametersInvalid_thenThrowsException() {
