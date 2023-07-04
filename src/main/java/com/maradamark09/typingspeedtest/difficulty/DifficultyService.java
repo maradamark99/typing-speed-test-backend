@@ -6,12 +6,13 @@ import com.maradamark09.typingspeedtest.exception.ResourceNotFoundException;
 import java.util.List;
 
 public interface DifficultyService {
-    List<Difficulty> findAll();
 
-    Difficulty save(DifficultyRequest difficultyRequest) throws ResourceAlreadyExistsException;
+    List<DifficultyDTO> findAll();
 
-    void deleteById(Long id) throws ResourceNotFoundException;
+    DifficultyDTO save(DifficultyDTO difficultyDTO) throws ResourceAlreadyExistsException;
 
-    Difficulty update(DifficultyRequest difficultyRequest, Long id);
+    void deleteById(long id) throws ResourceNotFoundException;
+
+    DifficultyDTO update(DifficultyDTO difficultyDTO, long id);
 
 }

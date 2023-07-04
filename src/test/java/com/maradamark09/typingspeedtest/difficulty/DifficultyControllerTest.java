@@ -49,10 +49,10 @@ public class DifficultyControllerTest {
 	@Test
 	public void whenSaveWithValidValue_thenReturns201AndDifficulty() throws Exception {
 
-		DifficultyRequest request = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
-		Difficulty expected = DifficultyDataProvider.DIFFICULTY_ENTITY;
+		var request = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
+		var expected = DifficultyDataProvider.DIFFICULTY_RESPONSE;
 
-		when(difficultyService.save(any(DifficultyRequest.class)))
+		when(difficultyService.save(any(DifficultyDTO.class)))
 				.thenReturn(expected);
 
 		var result = mockMvc.perform(post(CONTROLLER_PATH)
@@ -72,7 +72,7 @@ public class DifficultyControllerTest {
 	@Test
 	public void whenSaveWithInvalidValue_thenReturns422() throws Exception {
 
-		DifficultyRequest request = DifficultyDataProvider.INVALID_DIFFICULTY_REQUEST;
+		var request = DifficultyDataProvider.INVALID_DIFFICULTY_REQUEST;
 
 		mockMvc.perform(post(CONTROLLER_PATH)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -85,10 +85,10 @@ public class DifficultyControllerTest {
 	@Test
 	public void whenSaveWithAlreadyExistingValue_thenReturns409() throws Exception {
 
-		DifficultyRequest request = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
+		var request = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
 
-		doThrow(new DifficultyAlreadyExistsException(request.value())).when(difficultyService)
-				.save(any(DifficultyRequest.class));
+		doThrow(new DifficultyAlreadyExistsException(request.getValue())).when(difficultyService)
+				.save(any(DifficultyDTO.class));
 
 		mockMvc.perform(MockMvcRequestBuilders.post(CONTROLLER_PATH)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -131,11 +131,11 @@ public class DifficultyControllerTest {
 
 	@Test
 	public void whenUpdateWithValidValueAndId_thenReturns200() throws Exception {
-		long id = DifficultyDataProvider.DIFFICULTY_ID;
-		DifficultyRequest request = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
-		Difficulty expected = DifficultyDataProvider.DIFFICULTY_ENTITY;
+		var id = DifficultyDataProvider.DIFFICULTY_ID;
+		var request = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
+		var expected = DifficultyDataProvider.DIFFICULTY_RESPONSE;
 
-		when(difficultyService.update(any(DifficultyRequest.class), eq(id))).thenReturn(expected);
+		when(difficultyService.update(any(DifficultyDTO.class), eq(id))).thenReturn(expected);
 
 		var result = mockMvc.perform(MockMvcRequestBuilders.put(CONTROLLER_PATH + "/{id}", id)
 				.contentType(MediaType.APPLICATION_JSON)

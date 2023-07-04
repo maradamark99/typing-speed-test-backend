@@ -9,41 +9,38 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DifficultyServiceImpl implements DifficultyService {
 
+    private final DifficultyMapper mapper;
+
     private final DifficultyRepository difficultyRepository;
 
     @Override
-    public List<Difficulty> findAll() {
-        return difficultyRepository.findAll();
+    public List<DifficultyDTO> findAll() {
+        return difficultyRepository
+                .findAll()
+                .stream()
+                .map(mapper::entityToDto)
+                .toList();
     }
 
     @Override
-    public Difficulty save(DifficultyRequest difficultyRequest) {
-        if (difficultyRepository.existsByValue(difficultyRequest.value()))
-            throw new DifficultyAlreadyExistsException(difficultyRequest.value());
-
-        var difficultyToSave = Difficulty.builder()
-                .value(difficultyRequest.value())
-                .maxWordLength(difficultyRequest.maxWordLength())
-                .build();
-
-        return difficultyRepository.save(difficultyToSave);
+    public DifficultyDTO save(DifficultyDTO difficultyDTO) {
+        if (difficultyRepository.existsByValue(difficultyDTO.getValue()))
+            throw new DifficultyAlreadyExistsException(difficultyDTO.getValue());
+        return mapper.entityToDto(difficultyRepository.save(mapper.dtoToEntity(difficultyDTO)));
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(long id) {
         if (!difficultyRepository.existsById(id))
             throw new DifficultyNotFoundException(id);
         difficultyRepository.deleteById(id);
     }
 
     @Override
-    public Difficulty update(DifficultyRequest difficultyRequest, Long id) {
-        return difficultyRepository.findById(id)
-                .map(difficulty -> {
-                    difficulty.setValue(difficultyRequest.value());
-                    difficulty.setMaxWordLength(difficultyRequest.maxWordLength());
-                    return difficultyRepository.save(difficulty);
-                }).orElseGet(() -> save(difficultyRequest));
+    public DifficultyDTO update(DifficultyDTO difficultyDTO, long id) {
+        if (!difficultyRepository.existsById(id))
+            throw new DifficultyNotFoundException(id);
+        return mapper.entityToDto(difficultyRepository.save(mapper.dtoToEntity(difficultyDTO)));
     }
 
 }
