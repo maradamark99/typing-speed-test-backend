@@ -15,13 +15,14 @@ class WordDataProvider {
 
     static final long VALID_WORD_ID = 3L;
 
-    static final WordRequest VALID_WORD_REQUEST = new WordRequest("that", 1L);
+    static final WordDTO VALID_WORD_REQUEST = WordDTO.builder().value("that").difficulty_id(1L).build();
 
-    static final WordRequest INVALID_WORD_REQUEST = new WordRequest(null, 1L);
+    static final WordDTO INVALID_WORD_REQUEST = WordDTO.builder().value(null).difficulty_id(1L).build();
 
-    static final WordRequest WORD_REQUEST_LONG_VALUE = new WordRequest("sobasicallyimverylong", 1L);
+    static final WordDTO WORD_REQUEST_LONG_VALUE = WordDTO.builder().value("sobasicallyimverylong").difficulty_id(1L)
+            .build();
 
-    static final Difficulty DIFFICULTY_ENTITY = new Difficulty(1L, "easy", (byte)12, Collections.emptySet());
+    static final Difficulty DIFFICULTY_ENTITY = new Difficulty(1L, "easy", (byte) 12, Collections.emptySet());
 
     static final Word WORD_ENTITY = new Word(1L, "that", DIFFICULTY_ENTITY);
 

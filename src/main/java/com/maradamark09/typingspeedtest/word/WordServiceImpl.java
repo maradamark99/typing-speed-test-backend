@@ -14,6 +14,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WordServiceImpl implements WordService {
 
+    private final WordMapper mapper;
+
     private final WordRepository wordRepository;
 
     private final DifficultyRepository difficultyRepository;
@@ -35,28 +37,18 @@ public class WordServiceImpl implements WordService {
     }
 
     @Override
-    public Word getById(Long id) throws ResourceNotFoundException {
-        return wordRepository.findById(id)
-                .orElseThrow(() -> new WordNotFoundException(id));
-    }
-
-    @Override
-    public Word save(WordRequest wordRequest)
+    public WordDTO save(WordDTO wordDTO)
             throws ResourceNotFoundException, WordLengthGreaterThanDifficultyException, ResourceAlreadyExistsException {
-        var difficulty = difficultyRepository.findById(wordRequest.difficulty_id())
-                .orElseThrow(() -> new DifficultyNotFoundException(wordRequest.difficulty_id()));
+        var difficulty = difficultyRepository.findById(wordDTO.getDifficulty_id())
+                .orElseThrow(() -> new DifficultyNotFoundException(wordDTO.getDifficulty_id()));
 
-        if (wordRequest.value().length() > difficulty.getMaxWordLength())
-            throw new WordLengthGreaterThanDifficultyException(wordRequest.value(), difficulty);
+        if (wordDTO.getValue().length() > difficulty.getMaxWordLength())
+            throw new WordLengthGreaterThanDifficultyException(wordDTO.getValue(), difficulty);
 
-        if (wordRepository.existsByValue(wordRequest.value()))
-            throw new WordAlreadyExistsException(wordRequest.value());
+        if (wordRepository.existsByValue(wordDTO.getValue()))
+            throw new WordAlreadyExistsException(wordDTO.getValue());
 
-        var wordToSave = Word.builder()
-                .value(wordRequest.value())
-                .difficulty(difficulty)
-                .build();
-        return wordRepository.save(wordToSave);
+        return mapper.entityToDTO(wordRepository.save(mapper.dtoToEntity(wordDTO, difficulty)));
     }
 
     @Override
