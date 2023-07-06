@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.maradamark09</groupId>
 	<artifactId>typing-speed-test</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>typingspeedtest</name>
 	<description>typing speed test</description>
 	<properties>
@@ -37,9 +37,9 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.mariadb.jdbc</groupId>
-			<artifactId>mariadb-java-client</artifactId>
-			<scope>runtime</scope>
+    		<groupId>org.postgresql</groupId>
+    		<artifactId>postgresql</artifactId>
+    		<version>42.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
