@@ -1,5 +1,6 @@
 package com.maradamark09.typingspeedtest.result;
 
+import com.maradamark09.typingspeedtest.difficulty.Difficulty;
 import com.maradamark09.typingspeedtest.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -23,7 +24,7 @@ public class Result {
     private Long id;
 
     @NotNull
-    @Range(min = 0, max = 350)
+    @Range(min = 0, max = 500)
     private Short wpm;
 
     @NotNull
@@ -35,5 +36,9 @@ public class Result {
     @ManyToOne
     @NotNull
     private User user;
+
+    @ManyToOne
+    @NotNull
+    private Difficulty difficulty;
 
 }
