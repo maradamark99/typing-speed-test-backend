@@ -22,7 +22,7 @@ public class WordServiceImpl implements WordService {
 
     @Override
     public List<String> getAllByDifficulty(String difficulty) throws ResourceNotFoundException {
-        if (!difficultyRepository.existsByValue(difficulty.toLowerCase()))
+        if (!difficultyRepository.existsByValueIgnoreCase(difficulty))
             throw new DifficultyNotFoundException();
         return wordRepository.findAllByDifficulty(difficulty);
     }
@@ -30,7 +30,7 @@ public class WordServiceImpl implements WordService {
     @Override
     public List<String> getRandomWordsByDifficulty(String difficulty, Integer amount) throws ResourceNotFoundException {
 
-        if (!difficultyRepository.existsByValue(difficulty.toLowerCase()))
+        if (!difficultyRepository.existsByValueIgnoreCase(difficulty))
             throw new DifficultyNotFoundException();
 
         return wordRepository.findRandomWordsByDifficulty(difficulty, Pageable.ofSize(amount));

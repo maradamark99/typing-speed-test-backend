@@ -2,6 +2,7 @@ package com.maradamark09.typingspeedtest.result;
 
 import com.maradamark09.typingspeedtest.config.OpenAPIConfig;
 import com.maradamark09.typingspeedtest.user.User;
+import com.maradamark09.typingspeedtest.util.PageResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -33,7 +34,7 @@ public class ResultController {
 
     @Operation(summary = "Get results by page")
     @GetMapping
-    public ResponseEntity<List<ResultDTO>> getAmountOf(Pageable pageable) {
+    public ResponseEntity<PageResponse<ResultDTO>> getAmountOf(Pageable pageable) {
         return ResponseEntity.ok(
                 resultService.getAmountOf(PageRequest.of(pageable.getPage(), pageable.getSize())));
     }

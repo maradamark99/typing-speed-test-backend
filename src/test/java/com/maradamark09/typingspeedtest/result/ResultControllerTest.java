@@ -83,7 +83,7 @@ class ResultControllerTest {
         var validPage = ResultDataProvider.VALID_PAGE;
         var validSize = ResultDataProvider.VALID_SIZE;
 
-        var expected = ResultDataProvider.LIST_OF_RESULT_DTO;
+        var expected = ResultDataProvider.PAGE_OF_RESULT_DTO;
 
         when(resultService.getAmountOf(PageRequest.of(validPage, validSize))).thenReturn(expected);
 

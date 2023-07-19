@@ -1,5 +1,6 @@
 package com.maradamark09.typingspeedtest.result;
 
+import com.maradamark09.typingspeedtest.difficulty.Difficulty;
 import com.maradamark09.typingspeedtest.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -16,6 +17,7 @@ import java.time.ZonedDateTime;
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
+@ToString
 public class Result {
 
     @Id
@@ -23,17 +25,22 @@ public class Result {
     private Long id;
 
     @NotNull
-    @Range(min = 0, max = 350)
+    @Range(min = 0, max = 500)
     private Short wpm;
 
     @NotNull
     @Range(min = 0, max = 100)
     private BigDecimal accuracy;
 
-    private final Timestamp timestamp = Timestamp.from(ZonedDateTime.now().toInstant());
+    @NotNull
+    private Timestamp date;
 
     @ManyToOne
     @NotNull
     private User user;
+
+    @ManyToOne
+    @NotNull
+    private Difficulty difficulty;
 
 }

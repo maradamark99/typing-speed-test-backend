@@ -24,7 +24,7 @@ public class DifficultyServiceImpl implements DifficultyService {
 
     @Override
     public DifficultyDTO save(DifficultyDTO difficultyDTO) {
-        if (difficultyRepository.existsByValue(difficultyDTO.getValue()))
+        if (difficultyRepository.existsByValueIgnoreCase(difficultyDTO.getValue()))
             throw new DifficultyAlreadyExistsException(difficultyDTO.getValue());
         return mapper.entityToDto(difficultyRepository.save(mapper.dtoToEntity(difficultyDTO)));
     }

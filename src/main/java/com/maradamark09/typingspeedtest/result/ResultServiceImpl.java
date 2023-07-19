@@ -1,10 +1,15 @@
 package com.maradamark09.typingspeedtest.result;
 
 import com.maradamark09.typingspeedtest.auth.UserNotFoundException;
+import com.maradamark09.typingspeedtest.difficulty.Difficulty;
+import com.maradamark09.typingspeedtest.difficulty.DifficultyNotFoundException;
+import com.maradamark09.typingspeedtest.difficulty.DifficultyRepository;
 import com.maradamark09.typingspeedtest.user.User;
 import com.maradamark09.typingspeedtest.user.UserRepository;
+import com.maradamark09.typingspeedtest.util.PageResponse;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +26,21 @@ public class ResultServiceImpl implements ResultService {
 
     private final UserRepository userRepository;
 
+    private final DifficultyRepository difficultyRepository;
+
     @Override
-    public List<ResultDTO> getAmountOf(PageRequest pageRequest) {
-        return resultRepository
+    public PageResponse<ResultDTO> getAmountOf(PageRequest pageRequest) {
+        var page = resultRepository
                 .findAll(pageRequest)
-                .stream()
-                .map(mapper::entityToDto)
-                .toList();
+                .map(mapper::entityToDto);
+
+        return new PageResponse<ResultDTO>(
+                page.getContent(),
+                page.getTotalPages(),
+                page.getSize(),
+                page.getNumber(),
+                page.isLast(),
+                page.isFirst());
     }
 
     @Override
@@ -44,7 +57,9 @@ public class ResultServiceImpl implements ResultService {
 
     @Override
     public void save(ResultDTO resultRequest, User user) {
-        resultRepository.save(mapper.dtoToEntity(resultRequest, user));
+        Difficulty difficulty = difficultyRepository.findByValueIgnoreCase(resultRequest.getDifficulty())
+                .orElseThrow(() -> new DifficultyNotFoundException());
+        resultRepository.save(mapper.dtoToEntity(resultRequest, user, difficulty));
     }
 
     @Override
