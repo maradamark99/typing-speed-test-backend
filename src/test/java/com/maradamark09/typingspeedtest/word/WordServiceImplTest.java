@@ -45,13 +45,13 @@ class WordServiceImplTest {
         String difficulty = WordDataProvider.VALID_DIFFICULTY;
         List<String> expected = WordDataProvider.WORD_RESPONSE;
 
-        when(difficultyRepository.existsByValue(difficulty)).thenReturn(true);
+        when(difficultyRepository.existsByValueIgnoreCase(difficulty)).thenReturn(true);
         when(wordRepository.findAllByDifficulty(difficulty)).thenReturn(expected);
 
         List<String> actual = wordService.getAllByDifficulty(difficulty);
 
         assertThat(actual).containsExactlyElementsOf(expected);
-        verify(difficultyRepository).existsByValue(difficulty);
+        verify(difficultyRepository).existsByValueIgnoreCase(difficulty);
         verify(wordRepository).findAllByDifficulty(difficulty);
 
     }
@@ -60,11 +60,11 @@ class WordServiceImplTest {
     public void whenGetAllByDifficulty_andDifficultyDoesNotExist_thenThrowsException() {
 
         String difficulty = WordDataProvider.VALID_DIFFICULTY;
-        when(difficultyRepository.existsByValue(difficulty)).thenReturn(false);
+        when(difficultyRepository.existsByValueIgnoreCase(difficulty)).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> wordService.getAllByDifficulty(difficulty));
 
-        verify(difficultyRepository).existsByValue(difficulty);
+        verify(difficultyRepository).existsByValueIgnoreCase(difficulty);
         verify(wordRepository, never()).findAllByDifficulty(difficulty);
 
     }
@@ -74,11 +74,11 @@ class WordServiceImplTest {
 
         String difficulty = WordDataProvider.VALID_DIFFICULTY;
         int amount = WordDataProvider.AMOUNT_OF;
-        when(difficultyRepository.existsByValue(difficulty)).thenReturn(false);
+        when(difficultyRepository.existsByValueIgnoreCase(difficulty)).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> wordService.getRandomWordsByDifficulty(difficulty, amount));
 
-        verify(difficultyRepository).existsByValue(difficulty);
+        verify(difficultyRepository).existsByValueIgnoreCase(difficulty);
         verify(wordRepository, never()).findRandomWordsByDifficulty(difficulty, Pageable.ofSize(amount));
 
     }

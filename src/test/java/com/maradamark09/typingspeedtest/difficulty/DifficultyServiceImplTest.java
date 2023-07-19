@@ -80,7 +80,7 @@ class DifficultyServiceImplTest {
     public void whenSave_andDifficultyNotExists_thenSuccess() {
 
         var difficultyDTO = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
-        when(difficultyRepository.existsByValue(difficultyDTO.getValue())).thenReturn(false);
+        when(difficultyRepository.existsByValueIgnoreCase(difficultyDTO.getValue())).thenReturn(false);
 
         var difficultyToSave = Difficulty.builder()
                 .value(difficultyDTO.getValue())
@@ -98,7 +98,7 @@ class DifficultyServiceImplTest {
 
         var actual = difficultyService.save(difficultyDTO);
         assertEquals(expected, actual);
-        verify(difficultyRepository).existsByValue(difficultyDTO.getValue());
+        verify(difficultyRepository).existsByValueIgnoreCase(difficultyDTO.getValue());
         verify(difficultyRepository).save(difficultyToSave);
 
     }
@@ -107,11 +107,11 @@ class DifficultyServiceImplTest {
     public void whenSave_andDifficultyAlreadyExists_thenThrowsException() {
 
         var difficultyDTO = DifficultyDataProvider.VALID_DIFFICULTY_REQUEST;
-        when(difficultyRepository.existsByValue(difficultyDTO.getValue())).thenReturn(true);
+        when(difficultyRepository.existsByValueIgnoreCase(difficultyDTO.getValue())).thenReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> difficultyService.save(difficultyDTO));
 
-        verify(difficultyRepository).existsByValue(difficultyDTO.getValue());
+        verify(difficultyRepository).existsByValueIgnoreCase(difficultyDTO.getValue());
         verify(difficultyRepository, never()).save(any());
 
     }
