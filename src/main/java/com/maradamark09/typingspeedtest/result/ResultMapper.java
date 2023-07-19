@@ -1,8 +1,11 @@
 package com.maradamark09.typingspeedtest.result;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 
 import org.springframework.stereotype.Component;
 
@@ -15,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ResultMapper {
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
     public ResultDTO entityToDto(Result entity) {
 
         return ResultDTO
@@ -25,7 +26,7 @@ public class ResultMapper {
                 .wpm(entity.getWpm())
                 .accuracy(entity.getAccuracy().doubleValue())
                 .username(entity.getUser().getUsername())
-                .timestamp(DATE_FORMAT.format(entity.getTimestamp()))
+                .date(entity.getDate().toInstant().toEpochMilli())
                 .difficulty(entity.getDifficulty().getValue())
                 .build();
     }
@@ -36,6 +37,7 @@ public class ResultMapper {
                 .accuracy(BigDecimal.valueOf(dto.getAccuracy()))
                 .wpm(dto.getWpm())
                 .difficulty(difficulty)
+                .date(Timestamp.from(Instant.ofEpochMilli(dto.getDate())))
                 .build();
     }
 

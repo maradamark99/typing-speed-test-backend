@@ -14,12 +14,14 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode
+@ToString
 public class ResultDTO {
 
     private Long id;
@@ -34,7 +36,8 @@ public class ResultDTO {
 
     private String username;
 
-    private String timestamp;
+    @NotNull
+    private Long date;
 
     @NotBlank
     private String difficulty;

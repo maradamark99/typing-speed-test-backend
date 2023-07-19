@@ -17,6 +17,7 @@ import java.time.ZonedDateTime;
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
+@ToString
 public class Result {
 
     @Id
@@ -31,7 +32,8 @@ public class Result {
     @Range(min = 0, max = 100)
     private BigDecimal accuracy;
 
-    private final Timestamp timestamp = Timestamp.from(ZonedDateTime.now().toInstant());
+    @NotNull
+    private Timestamp date;
 
     @ManyToOne
     @NotNull
