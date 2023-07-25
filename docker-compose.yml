@@ -1,5 +1,4 @@
 version: '3'
-
 services:
     backend:
         build:
@@ -11,17 +10,17 @@ services:
         depends_on:
             - database
         environment:
-            DB_USER: ${DB_USER}
-            DB_PASSWORD: ${DB_PASSWORD}
-            DB_NAME: ${DB_NAME}
-            DB_URL: database:5432
+            DB_USER: '${DB_USER}'
+            DB_PASSWORD: '${DB_PASSWORD}'
+            DB_NAME: '${DB_NAME}'
+            DB_URL: 'database:5432'
     database:
         image: 'postgres:13-alpine'
-        restart: always
+        restart: on-failure
         container_name: db
         environment:
-            POSTGRES_USER: ${DB_USER}
-            POSTGRES_PASSWORD: ${DB_PASSWORD}
-            POSTGRES_DB: ${DB_NAME}
+            POSTGRES_USER: '${DB_USER}'
+            POSTGRES_PASSWORD: '${DB_PASSWORD}'
+            POSTGRES_DB: '${DB_NAME}'
         ports:
             - '5432:5432'
