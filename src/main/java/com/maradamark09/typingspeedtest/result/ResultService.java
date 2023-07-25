@@ -8,11 +8,11 @@ import com.maradamark09.typingspeedtest.util.PageResponse;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.domain.PageRequest;
+import org.springdoc.core.converters.models.Pageable;
 
 public interface ResultService {
 
-    PageResponse<ResultDTO> getAmountOf(PageRequest pageRequest);
+    PageResponse<ResultDTO> getAmountOf(Pageable pageable);
 
     List<ResultDTO> getByUserId(UUID userId) throws ResourceNotFoundException;
 

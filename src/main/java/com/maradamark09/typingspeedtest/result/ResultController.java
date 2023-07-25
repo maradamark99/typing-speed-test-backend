@@ -10,7 +10,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springdoc.core.converters.models.Pageable;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,9 +35,9 @@ public class ResultController {
 
     @Operation(summary = "Get results by page")
     @GetMapping
-    public ResponseEntity<PageResponse<ResultDTO>> getAmountOf(Pageable pageable) {
-        return ResponseEntity.ok(
-                resultService.getAmountOf(PageRequest.of(pageable.getPage(), pageable.getSize())));
+    public ResponseEntity<PageResponse<ResultDTO>> getAmountOf(
+            @PageableDefault(size = 5, direction = Sort.Direction.DESC, sort = "date") Pageable pageable) {
+        return ResponseEntity.ok(resultService.getAmountOf(pageable));
     }
 
     @Operation(summary = "Save a result")

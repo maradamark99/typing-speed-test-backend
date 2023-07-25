@@ -7,10 +7,13 @@ import com.maradamark09.typingspeedtest.difficulty.DifficultyRepository;
 import com.maradamark09.typingspeedtest.user.User;
 import com.maradamark09.typingspeedtest.user.UserRepository;
 import com.maradamark09.typingspeedtest.util.PageResponse;
+import com.maradamark09.typingspeedtest.util.PaginationUtil;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springdoc.core.converters.models.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,7 +32,9 @@ public class ResultServiceImpl implements ResultService {
     private final DifficultyRepository difficultyRepository;
 
     @Override
-    public PageResponse<ResultDTO> getAmountOf(PageRequest pageRequest) {
+    public PageResponse<ResultDTO> getAmountOf(Pageable pageable) {
+        var pageRequest = PaginationUtil.convertPageableToPageRequest(pageable);
+
         var page = resultRepository
                 .findAll(pageRequest)
                 .map(mapper::entityToDto);
