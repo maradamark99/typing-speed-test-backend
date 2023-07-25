@@ -1,6 +1,8 @@
 package com.maradamark09.typingspeedtest.exception;
 
 import com.maradamark09.typingspeedtest.word.WordLengthGreaterThanDifficultyException;
+
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -34,7 +36,8 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler({
 			HttpMessageNotReadableException.class,
 			MethodArgumentTypeMismatchException.class,
-			IllegalArgumentException.class
+			IllegalArgumentException.class,
+			PropertyReferenceException.class
 	})
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public MyErrorResponse handleInvalidRequestBodyFormatException(Exception ex, WebRequest request) {
@@ -77,11 +80,11 @@ public class GlobalExceptionHandler {
 				.status(status)
 				.statusCode(status.value())
 				.resource(request.getDescription(false))
-				.fieldErrors(getUsefulInfoFromFieldErrors(ex.getFieldErrors()))
+				.fieldErrors(mapToMyFieldError(ex.getFieldErrors()))
 				.build();
 	}
 
-	public List<MyFieldError> getUsefulInfoFromFieldErrors(List<FieldError> fieldErrors) {
+	public List<MyFieldError> mapToMyFieldError(List<FieldError> fieldErrors) {
 		return fieldErrors
 				.stream()
 				.map(
