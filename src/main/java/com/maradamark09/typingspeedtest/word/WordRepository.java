@@ -18,7 +18,7 @@ public interface WordRepository extends JpaRepository<Word, Long> {
                         "JOIN Difficulty d " +
                         "ON w.difficulty.id=d.id " +
                         "WHERE d.value=:difficulty " +
-                        "ORDER BY RAND()")
+                        "ORDER BY RANDOM()")
         List<String> findRandomWordsByDifficulty(
                         @Param("difficulty") String difficulty,
                         Pageable p);
