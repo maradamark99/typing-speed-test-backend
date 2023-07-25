@@ -12,12 +12,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springdoc.core.converters.models.Pageable;
 import org.springframework.data.domain.PageRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,6 +27,7 @@ class ResultServiceImplTest {
 
     @InjectMocks
     private ResultServiceImpl resultService;
+
     @Mock
     private ResultRepository resultRepository;
 
@@ -43,8 +46,8 @@ class ResultServiceImplTest {
 
     @Test
     public void whenGetAmountOf_andParametersInvalid_thenThrowsException() {
-        var exception = assertThrows(IllegalArgumentException.class, () -> resultService.getAmountOf(PageRequest.of(
-                ResultDataProvider.INVALID_PAGE, ResultDataProvider.INVALID_SIZE)));
+        var exception = assertThrows(IllegalArgumentException.class,
+                () -> resultService.getAmountOf(new Pageable(-24, -99, List.of("nice", "csa"))));
         assertThat(exception.getMessage()).contains("Page index must not be");
     }
 

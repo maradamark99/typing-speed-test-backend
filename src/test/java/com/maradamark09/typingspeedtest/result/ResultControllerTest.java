@@ -8,11 +8,11 @@ import com.maradamark09.typingspeedtest.auth.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springdoc.core.converters.models.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -79,33 +79,29 @@ class ResultControllerTest {
     }
 
     @Test
-    public void whenGetAmountOfWithValidPage_thenReturns200_andListOfResultResponse() throws Exception {
+    public void whenGetAmountOfWithValidPageAndSort_thenReturns200_andListOfResultResponse() throws Exception {
         var validPage = ResultDataProvider.VALID_PAGE;
         var validSize = ResultDataProvider.VALID_SIZE;
+        var sortField = "accuracy";
+        var sortDirection = "desc";
 
         var expected = ResultDataProvider.PAGE_OF_RESULT_DTO;
 
-        when(resultService.getAmountOf(PageRequest.of(validPage, validSize))).thenReturn(expected);
+        Pageable pageable = new Pageable(validPage, validSize, List.of(sortField, sortDirection));
 
-        var response = mockMvc.perform(MockMvcRequestBuilders.get(CONTROLLER_PATH)
-                .queryParam("page", String.valueOf(validPage))
-                .queryParam("size", String.valueOf(validSize)))
+        when(resultService.getAmountOf(pageable)).thenReturn(expected);
+
+        var response = mockMvc
+                .perform(MockMvcRequestBuilders.get(CONTROLLER_PATH)
+                        .queryParam("page", String.valueOf(validPage))
+                        .queryParam("size", String.valueOf(
+                                validSize))
+                        .queryParam("sort", sortField + "," + sortDirection))
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
 
-        assertEquals(response.getContentAsString(), objectMapper.writeValueAsString(expected));
+        assertEquals(objectMapper.writeValueAsString(expected), response.getContentAsString());
 
-    }
-
-    @Test
-    public void whenGetAmountOfWithValidPage_thenReturns400() throws Exception {
-        var invalidPage = ResultDataProvider.INVALID_PAGE;
-        var invalidSize = ResultDataProvider.INVALID_SIZE;
-
-        mockMvc.perform(MockMvcRequestBuilders.get(CONTROLLER_PATH)
-                .queryParam("page", String.valueOf(invalidPage))
-                .queryParam("size", String.valueOf(invalidSize)))
-                .andExpect(status().isBadRequest());
     }
 
     @Test
